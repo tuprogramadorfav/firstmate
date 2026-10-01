@@ -1,0 +1,3 @@
+registered: lavish-9c28a6d6396da724 (lavish)
+armed: lavish-9c28a6d6396da724
+artifact: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-test.FCwVdd/board/.lavish/review.html

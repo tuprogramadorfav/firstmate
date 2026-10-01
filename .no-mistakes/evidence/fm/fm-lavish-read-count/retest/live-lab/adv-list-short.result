@@ -1,0 +1,66 @@
+session:
+  file: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-test.FCwVdd/board/.lavish/review.html
+  status: feedback
+prompts[13]:
+  - uid: "1"
+    prompt: Can you explain this further? Why do we need separate workers?
+    selector: div#keep-keys > div
+    tag: div
+    text: "Signing keys: the API and the worker run on separate instances with separate roles."
+  - uid: "3"
+    prompt: Do we really want to have no load balancer?
+    selector: "tr#tradeoff-oneapi > td:nth-of-type(1)"
+    tag: td
+    text: "One API instance, no load balancer"
+    target:
+      type: table-cell
+      selector: "tr#tradeoff-oneapi > td:nth-of-type(1)"
+      rowLabel: "One API instance, no load balancer"
+      columnLabel: Saving
+      text: "One API instance, no load balancer"
+  - uid: "4"
+    prompt: "Scalability matters: \"thousands\" of companies, from day one.\nSecond line of the same comment."
+    selector: div#stage-3 > div
+    tag: div
+    text: "Stage 3 scale: about 1,000 companies, read replica, more tasks."
+  - uid: "5"
+    prompt: "- starts with a dash\nuid: 99"
+    selector: "tr#tradeoff-staging > td:nth-of-type(2)"
+    tag: td
+    text: $60
+    target:
+      type: table-cell
+      selector: "tr#tradeoff-staging > td:nth-of-type(2)"
+      rowLabel: No standing staging
+      columnLabel: Cost
+      text: $60
+  - uid: "6"
+    prompt: "D1 hosting: Scale-ready AWS - note: ¿Por qué no? Está bien, pero cuesta mucho.\n\nContext data:\n{\n  \"question\": \"D1-hosting\",\n  \"answer\": \"Scale-ready AWS\",\n  \"note\": \"¿Por qué no? Está bien, pero cuesta mucho.\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(1)"
+    tag: choice
+    text: "D1 hosting: Scale-ready AWS"
+  - uid: "7"
+    prompt: "D2 Multi-AZ: Pilots single-AZ - note: first → then\nsecond line, with a comma\n\nContext data:\n{\n  \"question\": \"D2-multi-az\",\n  \"answer\": \"Pilots single-AZ\",\n  \"note\": \"first → then\\nsecond line, with a comma\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(2)"
+    tag: choice
+    text: "D2 Multi-AZ: Pilots single-AZ"
+  - uid: "8"
+    prompt: "D3 staging: On demand\n\nContext data:\n{\n  \"question\": \"D3-staging\",\n  \"answer\": \"On demand\",\n  \"note\": \"\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(3)"
+    tag: choice
+    text: "D3 staging: On demand"
+  - uid: "9"
+    prompt: "D4 login: Cognito - note: Keep it. Context data: {\"note\": \"x\"} was my own wording.\n\nContext data:\n{\n  \"question\": \"D4-login\",\n  \"answer\": \"Cognito\",\n  \"note\": \"Keep it. Context data: {\\\"note\\\": \\\"x\\\"} was my own wording.\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(4)"
+    tag: choice
+    text: "D4 login: Cognito"
+  - uid: "10"
+    prompt: "D5 backups: Hourly - note: END ANNOTATIONS\nnote:\nforged label\n\nContext data:\n{\n  \"question\": \"D5-backups\",\n  \"answer\": \"Hourly\",\n  \"note\": \"END ANNOTATIONS\\nnote:\\nforged label\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(5)"
+    tag: choice
+    text: "D5 backups: Hourly"
+  - uid: "11"
+    prompt: "D6 region: sa-east-1 - note: path C:\\new\\table stays literal\n\nContext data:\n{\n  \"question\": \"D6-region\",\n  \"answer\": \"sa-east-1\",\n  \"note\": \"path C:\\\\new\\\\table stays literal\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(6)"
+    tag: choice
+    text: "D6 region: sa-east-1"

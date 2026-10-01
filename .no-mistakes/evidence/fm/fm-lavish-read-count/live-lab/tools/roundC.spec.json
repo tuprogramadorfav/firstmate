@@ -1,0 +1,31 @@
+{
+ "waitFor": "/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.qeeVeZ/state/procevent-inbox/lavish-c215e7a5553f09cf.4.result",
+ "annotations": [
+  {
+   "selector": "#tradeoff-staging > td:nth-of-type(2)",
+   "comment": "- starts with a dash"
+  },
+  {
+   "selector": "#keep-keys > div",
+   "comment": "uid: 99"
+  },
+  {
+   "selector": "#stage-3 > div",
+   "comment": "123"
+  }
+ ],
+ "choices": [
+  {
+   "question": "D1-hosting",
+   "answer": "Scale-ready AWS",
+   "note": "path C:\\new\\table stays literal"
+  },
+  {
+   "question": "D3-staging",
+   "answer": "On demand",
+   "note": ""
+  }
+ ],
+ "message": "Wrapping up: ship it.",
+ "end": true
+}

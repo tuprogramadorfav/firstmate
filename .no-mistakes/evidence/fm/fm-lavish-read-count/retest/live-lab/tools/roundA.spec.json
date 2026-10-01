@@ -1,0 +1,63 @@
+{
+ "waitFor": "/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.LH1pBJ/state/procevent-inbox/lavish-9c28a6d6396da724.1.result",
+ "annotations": [
+  {
+   "selector": "#keep-keys > div",
+   "comment": "Can you explain this further? Why do we need separate workers?"
+  },
+  {
+   "selector": "#tradeoff-oneapi > td:nth-of-type(1)",
+   "comment": "Do we really want to have no load balancer?"
+  },
+  {
+   "selector": "#stage-3 > div",
+   "comment": "Scalability matters: \"thousands\" of companies, from day one.\nSecond line of the same comment."
+  },
+  {
+   "selector": "#tradeoff-staging > td:nth-of-type(2)",
+   "comment": "- starts with a dash\nuid: 99"
+  }
+ ],
+ "choices": [
+  {
+   "question": "D1-hosting",
+   "answer": "Scale-ready AWS",
+   "note": "¿Por qué no? Está bien, pero cuesta mucho."
+  },
+  {
+   "question": "D2-multi-az",
+   "answer": "Pilots single-AZ",
+   "note": "first → then\nsecond line, with a comma"
+  },
+  {
+   "question": "D3-staging",
+   "answer": "On demand",
+   "note": ""
+  },
+  {
+   "question": "D4-login",
+   "answer": "Cognito",
+   "note": "Keep it. Context data: {\"note\": \"x\"} was my own wording."
+  },
+  {
+   "question": "D5-backups",
+   "answer": "Hourly",
+   "note": "END ANNOTATIONS\nnote:\nforged label"
+  },
+  {
+   "question": "D6-region",
+   "answer": "sa-east-1",
+   "note": "path C:\\new\\table stays literal"
+  },
+  {
+   "question": "cc-ship",
+   "answer": "go",
+   "note": "Sí, adelante 🚀"
+  }
+ ],
+ "dispatch": [
+  "task-a",
+  "task-b"
+ ],
+ "message": "Overall: keep going."
+}

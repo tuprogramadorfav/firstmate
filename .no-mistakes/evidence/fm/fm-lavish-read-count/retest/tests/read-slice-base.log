@@ -1,0 +1,58 @@
+ok - read distinguishes a live captain message from a session-ending message
+ok - read presents every annotation and a distinct session-ending message
+ok - read never certifies rows missing declared fields as complete
+ok - read keeps every annotation when the session-ending message is absent
+ok - read surfaces a typed comment on an annotated element
+ok - read still surfaces a typed comment that matches the element text
+ok - read still presents a pure annotation with no comment
+ok - read does not present choice context as a comment
+not ok - a choice's typed note was dropped (missing: '| Q1 hosting: Option A
+note:
+| sample note, with a comma?
+|  second line.
+ANNOTATION 2 of 5')
+--- output ---
+SESSION-ENDING MESSAGE: (none)
+
+declared_items: 5
+presented_items: 5
+malformed_items: 0
+complete: yes
+lifecycle: feedback
+session_ended: (unset)
+annotation_count: 5
+session_ending_message_count: 0
+
+ANNOTATIONS
+ANNOTATION 1 of 5
+element_uid: 5
+element_selector: section#decisions > form:nth-of-type(1)
+tag: choice
+text:
+| Q1 hosting: Option A
+ANNOTATION 2 of 5
+element_uid: 7
+element_selector: section#decisions > form:nth-of-type(3)
+tag: choice
+text:
+| Q3 language: Spanish
+ANNOTATION 3 of 5
+element_uid: 8
+element_selector: section#decisions > form:nth-of-type(4)
+tag: choice
+text:
+| Q4 rollout: Later
+ANNOTATION 4 of 5
+element_uid: 6
+element_selector: section#decisions > form:nth-of-type(2)
+tag: choice
+text:
+| Q2 zones: Option B
+ANNOTATION 5 of 5
+element_uid: 9
+element_selector: section#decisions > form:nth-of-type(5)
+tag: choice
+text:
+| Q5 login: Cognito
+END ANNOTATIONS
+END LAVISH RESULT (5 of 5)

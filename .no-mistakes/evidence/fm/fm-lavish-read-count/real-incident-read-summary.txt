@@ -1,0 +1,9 @@
+Real tebas-tech-proposal captures (lavish-54e0517100b8d733), read on private copies; originals untouched.
+Content withheld (client proposal); counts only. 'notes' = 'note:' fields printed; 'oracle' = head read equals an independent Python parse of every item field and Context note.
+round    framing        b.decl    b.pres    b.compl   b.notes | h.decl    h.pres    h.compl   h.notes oracle
+.2       list           0         0         yes       0      | 10        10        yes       3      match 
+.3       tabular        5         5         yes       0      | 5         5         yes       4      match 
+.4       tabular        2         2         yes       0      | 2         2         yes       1      match 
+Context-data notes present in raw: .2=3 .3=4 .4=1
+.1: base and head identical: yes (status: browser_disconnected)
+.5: base and head identical: yes (status: ended)

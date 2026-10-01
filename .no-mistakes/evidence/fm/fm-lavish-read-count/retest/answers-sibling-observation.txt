@@ -1,0 +1,7 @@
+Pre-existing, out of scope (answers/reconciles excluded by recorded decision; unchanged by this branch).
+Live bearings-board capture: live-lab/bearings.capture.result (tabular framing, 3 choice rows).
+`read` (head) presents all 3 rows and both typed notes. `answers` (head and base, identical) emits only:
+lab-hosting-decision	scale	Hosting plan -> scale - ¿Por qué no? Está bien → pero cuesta
+dispatch.charted	lab-task-a,lab-task-b	Dispatch: lab-task-a, lab-task-b
+The lab-login-decision answer, whose note quotes 'Context data: {', is not emitted to the keyed-answer intake.
+Cause: cmd_choice_rows matches the leftmost 'Context data:' (bin/fm-procevent-lavish.sh:634), the same shape read's choice_note fixed in 3b7232e1.

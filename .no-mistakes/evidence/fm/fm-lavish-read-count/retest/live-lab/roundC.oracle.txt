@@ -1,0 +1,14 @@
+declared_items: 3
+presented_items: 3
+ANNOTATION 1 of 2
+element_uid: 1
+element_selector: tr#tradeoff-oneapi > td:nth-of-type(2)
+tag: td
+text: '$0'
+prompt: 'Is $0 right?'
+ANNOTATION 2 of 2
+element_uid: 3
+element_selector: section#decisions > div > form:nth-of-type(3)
+tag: choice
+text: 'D3 staging: Always on'
+note: 'último: «sí»'

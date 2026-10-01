@@ -1,0 +1,14 @@
+ok - read distinguishes a live captain message from a session-ending message
+ok - read presents every annotation and a distinct session-ending message
+ok - read never certifies rows missing declared fields as complete
+ok - read keeps every annotation when the session-ending message is absent
+ok - read surfaces a typed comment on an annotated element
+ok - read still surfaces a typed comment that matches the element text
+ok - read still presents a pure annotation with no comment
+ok - read does not present choice context as a comment
+ok - read presents a choice's typed note
+ok - read presents no note for a choice whose Context data has none
+ok - read presents every item of an expanded-list capture
+ok - read never certifies a short expanded-list capture as complete
+ok - read still presents a pure message with no selector
+ok - read distinguishes a feedback capture from an ended-with-nothing close

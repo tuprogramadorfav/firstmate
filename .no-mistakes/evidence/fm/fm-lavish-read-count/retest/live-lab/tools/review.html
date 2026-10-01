@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lab review board</title>
+<style>
+  html, body { background: #ffffff; }
+  body { font-family: system-ui, sans-serif; margin: 32px; max-width: 900px; color: #1d2433; }
+  .card { border: 1px solid #c9d1e0; border-radius: 8px; padding: 16px; margin: 12px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  td, th { border: 1px solid #c9d1e0; padding: 8px; text-align: left; }
+  form, #dispatch-bar { border: 1px solid #c9d1e0; border-radius: 8px; padding: 12px; margin: 10px 0; }
+  form label, #dispatch-bar label { margin-right: 16px; }
+  textarea { display: block; width: 100%; margin: 8px 0; min-height: 40px; box-sizing: border-box; }
+  h2 { font-size: 18px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<h1>Lab review board</h1>
+<section id="cards">
+  <div id="keep-keys" class="card"><div>Signing keys: the API and the worker run on separate instances with separate roles.</div></div>
+  <div id="stage-3" class="card"><div>Stage 3 scale: about 1,000 companies, read replica, more tasks.</div></div>
+</section>
+<table id="tradeoffs">
+  <thead><tr><th>Saving</th><th>Cost</th></tr></thead>
+  <tbody>
+    <tr id="tradeoff-oneapi"><td>One API instance, no load balancer</td><td>$0</td></tr>
+    <tr id="tradeoff-staging"><td>No standing staging</td><td>$60</td></tr>
+  </tbody>
+</table>
+<h2>Decisions</h2>
+<section id="decisions"><div>
+  <form data-lavish-question="D1-hosting" onsubmit="return queueChoice(event, 'D1 hosting', 'D1-hosting')">
+    <label><input type="radio" name="choice" value="Lean AWS"> Lean AWS</label>
+    <label><input type="radio" name="choice" value="Scale-ready AWS"> Scale-ready AWS</label>
+    <textarea name="note" placeholder="Note"></textarea>
+    <button type="submit">Queue this answer</button>
+  </form>
+  <form data-lavish-question="D2-multi-az" onsubmit="return queueChoice(event, 'D2 Multi-AZ', 'D2-multi-az')">
+    <label><input type="radio" name="choice" value="Pilots single-AZ"> Pilots single-AZ</label>
+    <label><input type="radio" name="choice" value="Always Multi-AZ"> Always Multi-AZ</label>
+    <textarea name="note" placeholder="Note"></textarea>
+    <button type="submit">Queue this answer</button>
+  </form>
+  <form data-lavish-question="D3-staging" onsubmit="return queueChoice(event, 'D3 staging', 'D3-staging')">
+    <label><input type="radio" name="choice" value="On demand"> On demand</label>
+    <label><input type="radio" name="choice" value="Always on"> Always on</label>
+    <textarea name="note" placeholder="Note"></textarea>
+    <button type="submit">Queue this answer</button>
+  </form>
+  <form data-lavish-question="D4-login" onsubmit="return queueChoice(event, 'D4 login', 'D4-login')">
+    <label><input type="radio" name="choice" value="Cognito"> Cognito</label>
+    <label><input type="radio" name="choice" value="Other provider"> Other provider</label>
+    <textarea name="note" placeholder="Note"></textarea>
+    <button type="submit">Queue this answer</button>
+  </form>
+  <form data-lavish-question="D5-backups" onsubmit="return queueChoice(event, 'D5 backups', 'D5-backups')">
+    <label><input type="radio" name="choice" value="Daily"> Daily</label>
+    <label><input type="radio" name="choice" value="Hourly"> Hourly</label>
+    <textarea name="note" placeholder="Note"></textarea>
+    <button type="submit">Queue this answer</button>
+  </form>
+  <form data-lavish-question="D6-region" onsubmit="return queueChoice(event, 'D6 region', 'D6-region')">
+    <label><input type="radio" name="choice" value="us-east-1"> us-east-1</label>
+    <label><input type="radio" name="choice" value="sa-east-1"> sa-east-1</label>
+    <textarea name="note" placeholder="Note"></textarea>
+    <button type="submit">Queue this answer</button>
+  </form>
+</div></section>
+<h2>Captain's Call</h2>
+<section id="call">
+  <form data-lavish-question="cc-ship" onsubmit="return queueCall(event, 'Ship the proposal', 'cc-ship')">
+    <label><input type="radio" name="choice" value="go"> go</label>
+    <label><input type="radio" name="choice" value="hold"> hold</label>
+    <textarea name="note" placeholder="Note"></textarea>
+    <button type="submit">Queue this answer</button>
+  </form>
+</section>
+<h2>Charted next</h2>
+<div id="dispatch-bar">
+  <label><input type="checkbox" value="task-a"> task-a</label>
+  <label><input type="checkbox" value="task-b"> task-b</label>
+  <button type="button" id="dispatch-btn" onclick="queueDispatch()">Dispatch picked</button>
+</div>
+<script>
+  /* Same shape as the tebas proposal board: prose echoes the note, data carries it. */
+  function queueChoice(event, label, question) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = new FormData(form);
+    const answer = values.get('choice');
+    if (!answer) return false;
+    const note = (values.get('note') || '').trim();
+    const text = label + ': ' + answer;
+    const prompt = note ? text + ' - note: ' + note : text;
+    window.lavish.queuePrompt(prompt, {
+      tag: 'choice', text, element: form,
+      data: { question, answer, note },
+    });
+    return false;
+  }
+  /* Same shape as the bearings board's Captain's Call card. */
+  function queueCall(event, title, key) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const fd = new FormData(form);
+    const value = fd.get('choice');
+    const note = (fd.get('note') || '').trim();
+    const displayAnswer = value ? (note ? value + ' - ' + note : value) : note;
+    if (!displayAnswer) return false;
+    window.lavish.queuePrompt("Captain's Call answer - " + title + ': ' + displayAnswer, {
+      tag: 'choice', text: title + ' -> ' + displayAnswer, element: form,
+      data: { schema: 'fm-bearings-answer.v1', question: key, selection: value || '', note: note },
+    });
+    return false;
+  }
+  /* Same shape as the bearings board's Charted Next dispatch bar: no note key. */
+  function queueDispatch() {
+    const bar = document.getElementById('dispatch-bar');
+    const ids = Array.from(bar.querySelectorAll('input:checked')).map((i) => i.value);
+    if (!ids.length) return;
+    window.lavish.queuePrompt('Dispatch order - start this queued work now: ' + ids.join(', '), {
+      tag: 'choice', text: 'Dispatch: ' + ids.join(', '), element: bar,
+      queueKey: 'dispatch.charted',
+      data: { question: 'dispatch.charted', answer: ids.join(',') },
+    });
+  }
+</script>
+</body>
+</html>

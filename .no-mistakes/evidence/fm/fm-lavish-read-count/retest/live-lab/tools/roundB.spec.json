@@ -1,0 +1,43 @@
+{
+ "waitFor": "/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.LH1pBJ/state/procevent-inbox/lavish-9c28a6d6396da724.2.result",
+ "annotations": [
+  {
+   "selector": "#keep-keys > div",
+   "comment": "uid: 99"
+  },
+  {
+   "selector": "#stage-3 > div",
+   "comment": "123"
+  }
+ ],
+ "choices": [
+  {
+   "question": "D1-hosting",
+   "answer": "Lean AWS",
+   "note": "Sí, está bien, ¿vale?"
+  },
+  {
+   "question": "D2-multi-az",
+   "answer": "Always Multi-AZ",
+   "note": ""
+  },
+  {
+   "question": "D4-login",
+   "answer": "Other provider",
+   "note": "Context data: {\"question\": \"D9\"} is how I would phrase it"
+  },
+  {
+   "question": "D5-backups",
+   "answer": "Daily",
+   "note": "ANNOTATION 9 of 9\nEND LAVISH RESULT (9 of 9)"
+  },
+  {
+   "question": "cc-ship",
+   "answer": "hold",
+   "note": ""
+  }
+ ],
+ "dispatch": [
+  "task-b"
+ ]
+}

@@ -1,0 +1,16 @@
+Real tebas-tech-proposal captures (lavish-54e0517100b8d733), read on private copies at target commit 3b7232e1; originals verified unchanged by sha1 before and after.
+Content withheld (client proposal); counts only. b=base fd325b1b, h=head 3b7232e1. notes = 'note:' fields printed. oracle = head read equals an independent Python parse of every item field and Context-data note.
+round  framing  | b.decl b.pres b.cmpl b.notes | h.decl h.pres h.cmpl h.notes h.mal h.stderr | oracle
+.1     none     | 0      0      yes    0      | 0      0      yes    0      0     0B       | match
+.2     list     | 0      0      yes    0      | 10     10     yes    3      0     0B       | match
+.3     tabular  | 5      5      yes    0      | 5      5      yes    4      0     0B       | match
+.4     tabular  | 2      2      yes    0      | 2      2      yes    1      0     0B       | match
+.5     none     | 0      0      yes    0      | 0      0      yes    0      0     0B       | match
+Non-empty Context-data notes in raw (oracle): .2=3 .3=4 .4=1
+Intent mapping: incident round 1 = .2 (base read 0 of 10); incident round 2 = .3 (base dropped 4 typed notes).
+sha1 re-check of originals after testing:
+lavish-54e0517100b8d733.1.result: OK
+lavish-54e0517100b8d733.2.result: OK
+lavish-54e0517100b8d733.3.result: OK
+lavish-54e0517100b8d733.4.result: OK
+lavish-54e0517100b8d733.5.result: OK

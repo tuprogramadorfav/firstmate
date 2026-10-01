@@ -1,0 +1,39 @@
+{
+ "waitFor": "/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.qeeVeZ/state/procevent-inbox/lavish-c215e7a5553f09cf.1.result",
+ "annotations": [
+  {
+   "selector": "#keep-keys > div",
+   "comment": "Can you explain this further? Why do we need separate workers?"
+  },
+  {
+   "selector": "#tradeoff-oneapi > td:nth-of-type(1)",
+   "comment": "Do we really want to have no load balancer?"
+  },
+  {
+   "selector": "#stage-3 > div",
+   "comment": "Scalability matters: \"thousands\" of companies, from day one.\nSecond line of the same comment."
+  }
+ ],
+ "choices": [
+  {
+   "question": "D1-hosting",
+   "answer": "Scale-ready AWS",
+   "note": "¿Por qué no? Está bien, pero cuesta mucho."
+  },
+  {
+   "question": "D2-multi-az",
+   "answer": "Pilots single-AZ",
+   "note": "first → then\nsecond line, with a comma"
+  },
+  {
+   "question": "D3-staging",
+   "answer": "On demand",
+   "note": ""
+  },
+  {
+   "question": "D4-login",
+   "answer": "Other provider",
+   "note": "Let's look up another provider: one that is free up to 1M users."
+  }
+ ]
+}

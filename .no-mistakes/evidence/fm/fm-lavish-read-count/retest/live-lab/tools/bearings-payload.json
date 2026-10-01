@@ -1,0 +1,41 @@
+{
+  "schema": "fm-bearings-board.v1",
+  "home": "fm-lab",
+  "generated": "2026-09-30T21:00Z",
+  "prs_live": false,
+  "captains_call": [
+    {
+      "key": "lab-hosting-decision",
+      "type": "decision",
+      "repo": "lab",
+      "title": "Hosting plan",
+      "about": "Lean or scale-ready AWS for the pilot.",
+      "decide": "Which plan?",
+      "options": [
+        { "value": "lean", "label": "Lean AWS" },
+        { "value": "scale", "label": "Scale-ready AWS" }
+      ],
+      "allow_freeform": true
+    },
+    {
+      "key": "lab-login-decision",
+      "type": "decision",
+      "repo": "lab",
+      "title": "Login provider",
+      "about": "Cognito or another provider.",
+      "decide": "Keep Cognito?",
+      "options": [
+        { "value": "cognito", "label": "Cognito" },
+        { "value": "other", "label": "Other provider" }
+      ],
+      "allow_freeform": true
+    }
+  ],
+  "underway": [],
+  "landed": [],
+  "charted": [
+    { "id": "lab-task-a", "repo": "lab", "title": "Queued work A", "reason": "", "dispatchable": true },
+    { "id": "lab-task-b", "repo": "lab", "title": "Queued work B", "reason": "", "dispatchable": true }
+  ],
+  "charted_more": 0
+}

@@ -1,0 +1,47 @@
+session:
+  file: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-read.8ZimPK/board/.lavish/review.html
+  status: feedback
+prompts[7]:
+  - uid: "1"
+    prompt: Can you explain this further? Why do we need separate workers?
+    selector: div#keep-keys > div
+    tag: div
+    text: "Signing keys: the API and the worker run on separate instances with separate roles."
+  - uid: "3"
+    prompt: Do we really want to have no load balancer?
+    selector: "tr#tradeoff-oneapi > td:nth-of-type(1)"
+    tag: td
+    text: "One API instance, no load balancer"
+    target:
+      type: table-cell
+      selector: "tr#tradeoff-oneapi > td:nth-of-type(1)"
+      rowLabel: "One API instance, no load balancer"
+      columnLabel: Saving
+      text: "One API instance, no load balancer"
+  - uid: "4"
+    prompt: "Scalability matters: \"thousands\" of companies, from day one.\nSecond line of the same comment."
+    selector: div#stage-3 > div
+    tag: div
+    text: "Stage 3 scale: about 1,000 companies, read replica, more tasks."
+  - uid: "5"
+    prompt: "D1 hosting: Scale-ready AWS - note: ¿Por qué no? Está bien, pero cuesta mucho.\n\nContext data:\n{\n  \"question\": \"D1-hosting\",\n  \"answer\": \"Scale-ready AWS\",\n  \"note\": \"¿Por qué no? Está bien, pero cuesta mucho.\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(1)"
+    tag: choice
+    text: "D1 hosting: Scale-ready AWS"
+  - uid: "6"
+    prompt: "D2 Multi-AZ: Pilots single-AZ - note: first → then\nsecond line, with a comma\n\nContext data:\n{\n  \"question\": \"D2-multi-az\",\n  \"answer\": \"Pilots single-AZ\",\n  \"note\": \"first → then\\nsecond line, with a comma\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(2)"
+    tag: choice
+    text: "D2 Multi-AZ: Pilots single-AZ"
+  - uid: "7"
+    prompt: "D3 staging: On demand\n\nContext data:\n{\n  \"question\": \"D3-staging\",\n  \"answer\": \"On demand\",\n  \"note\": \"\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(3)"
+    tag: choice
+    text: "D3 staging: On demand"
+  - uid: "8"
+    prompt: "D4 login: Other provider - note: Let's look up another provider: one that is free up to 1M users.\n\nContext data:\n{\n  \"question\": \"D4-login\",\n  \"answer\": \"Other provider\",\n  \"note\": \"Let's look up another provider: one that is free up to 1M users.\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(4)"
+    tag: choice
+    text: "D4 login: Other provider"
+next_step: "Apply the requested changes to /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-read.8ZimPK/board/.lavish/review.html. Do not respond to the user just yet. If you are continuing to wait for feedback, run `lavish-axi poll /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-read.8ZimPK/board/.lavish/review.html --agent-reply \"<message for the user>\"` without --timeout-ms to reply and keep polling. If instead you are handing back a result without starting another long-poll, run `lavish-axi reply /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-read.8ZimPK/board/.lavish/review.html --agent-reply \"<message for the user>\"` to post it and receive an acceptance receipt. Keep the reply concise. Only when a longer reply is genuinely necessary, use Markdown structure - blank-line paragraphs, `- ` / `1. ` lists, `## ` headings - so it renders scannably instead of a wall of text, and pass that body with `--agent-reply-file <path>` (`-` reads stdin) so newlines survive quoting. The Conversation panel's Markdown subset is in `lavish-axi poll --help` and README. The poll waits silently until the user sends more feedback, ends the session, or leaves every review window disconnected past the reconnect grace period - never kill it. Keep the poll in the foreground by default and let it return the feedback directly to the agent. A background poll is allowed only through a harness-native tracked background-job facility whose completion result is guaranteed to resume or notify the same agent. Never use `nohup`, shell `&`, `disown`, redirected fire-and-forget processes, or a detached terminal without an explicit verified callback merely to keep polling alive. If the harness has no completion-aware background facility, use the foreground poll or first wire a verified wake callback into the surrounding supervisor. Do not tell the user the artifact is being monitored until that wake path is live. If the poll gets killed or times out before feedback arrives, re-run it - feedback remains queued until delivery. Poll delivery consumes the response, so read it completely. If it returns browser_disconnected, the review window stayed disconnected past its reconnect grace period but the session remains resumable; ask the user whether to reopen or end it, and do neither uninvited."
+dom_snapshot: "uid=9 body \"Lab review board Signing keys: the API and the worker run on separate instances \"\n  uid=10 h1 \"Lab review board\"\n  uid=11 section \"Signing keys: the API and the worker run on separate instances with separate rol\"\n    uid=12 div \"Signing keys: the API and the worker run on separate instances with separate rol\"\n      uid=1 div \"Signing keys: the API and the worker run on separate instances with separate rol\"\n    uid=13 div \"Stage 3 scale: about 1,000 companies, read replica, more tasks.\"\n      uid=4 div \"Stage 3 scale: about 1,000 companies, read replica, more tasks.\"\n  uid=14 table \"Saving Cost One API instance, no load balancer $0 No standing staging $60\"\n    uid=15 thead \"Saving Cost\"\n      uid=16 tr \"Saving Cost\"\n        uid=17 th \"Saving\"\n        uid=18 th \"Cost\"\n    uid=19 tbody \"One API instance, no load balancer $0 No standing staging $60\"\n      uid=20 tr \"One API instance, no load balancer $0\"\n        uid=3 td \"One API instance, no load balancer\"\n        uid=21 td \"$0\"\n      uid=22 tr \"No standing staging $60\"\n        uid=23 td \"No standing staging\"\n        uid=24 td \"$60\"\n  uid=25 section \"Lean AWS Scale-ready AWS Queue this answer Pilots single-AZ Always Multi-AZ Queu\"\n    uid=26 div \"Lean AWS Scale-ready AWS Queue this answer Pilots single-AZ Always Multi-AZ Queu\"\n      uid=5 form \"Lean AWS Scale-ready AWS Queue this answer\"\n        uid=27 label \"Lean AWS\"\n          uid=28 input\n        uid=29 label \"Scale-ready AWS\"\n          uid=30 input\n        uid=31 textarea\n        uid=32 button \"Queue this answer\"\n      uid=6 form \"Pilots single-AZ Always Multi-AZ Queue this answer\"\n        uid=33 label \"Pilots single-AZ\"\n          uid=34 input\n        uid=35 label \"Always Multi-AZ\"\n          uid=36 input\n        uid=37 textarea\n        uid=38 button \"Queue this answer\"\n      uid=7 form \"On demand Always on Queue this answer\"\n        uid=39 label \"On demand\"\n          uid=40 input\n        uid=41 label \"Always on\"\n          uid=42 input\n        uid=43 textarea\n        uid=44 button \"Queue this answer\"\n      uid=8 form \"Cognito Other provider Queue this answer\"\n        uid=45 label \"Cognito\"\n          uid=46 input\n        uid=47 label \"Other provider\"\n          uid=48 input\n        uid=49 textarea\n        uid=50 button \"Queue this answer\"\n  uid=51 script \"function queueChoice(event, label, question) { event.preventDefault(); const for\"\n  uid=52 script"

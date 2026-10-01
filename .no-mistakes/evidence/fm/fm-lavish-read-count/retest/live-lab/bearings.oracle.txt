@@ -1,0 +1,19 @@
+declared_items: 3
+presented_items: 3
+ANNOTATION 1 of 3
+element_uid: 1
+element_selector: div#bb-call > div:nth-of-type(1) > div > form
+tag: choice
+text: 'Hosting plan -> scale - ¿Por qué no? Está bien → pero cuesta'
+note: '¿Por qué no? Está bien → pero cuesta'
+ANNOTATION 2 of 3
+element_uid: 2
+element_selector: div#bb-call > div:nth-of-type(2) > div > form
+tag: choice
+text: 'Login provider -> cognito - Keep it. Context data: {"note": "x"} was my wording'
+note: 'Keep it. Context data: {"note": "x"} was my wording'
+ANNOTATION 3 of 3
+element_uid: 3
+element_selector: div#bb-dispatch
+tag: choice
+text: 'Dispatch: lab-task-a, lab-task-b'

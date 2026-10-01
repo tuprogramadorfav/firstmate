@@ -1,0 +1,70 @@
+SESSION-ENDING MESSAGE: (none)
+
+declared_items: 7
+presented_items: 7
+malformed_items: 0
+complete: yes
+lifecycle: feedback
+session_ended: (unset)
+annotation_count: 7
+session_ending_message_count: 0
+
+ANNOTATIONS
+ANNOTATION 1 of 7
+element_uid: 1
+element_selector: div#keep-keys > div
+tag: div
+text:
+| Signing keys: the API and the worker run on separate instances with separate roles.
+prompt:
+| Can you explain this further? Why do we need separate workers?
+ANNOTATION 2 of 7
+element_uid: 3
+element_selector: tr#tradeoff-oneapi > td:nth-of-type(1)
+tag: td
+text:
+| One API instance, no load balancer
+prompt:
+| Do we really want to have no load balancer?
+ANNOTATION 3 of 7
+element_uid: 4
+element_selector: div#stage-3 > div
+tag: div
+text:
+| Stage 3 scale: about 1,000 companies, read replica, more tasks.
+prompt:
+| Scalability matters: "thousands" of companies, from day one.
+| Second line of the same comment.
+ANNOTATION 4 of 7
+element_uid: 5
+element_selector: section#decisions > div > form:nth-of-type(1)
+tag: choice
+text:
+| D1 hosting: Scale-ready AWS
+note:
+| ¿Por qué no? Está bien, pero cuesta mucho.
+ANNOTATION 5 of 7
+element_uid: 6
+element_selector: section#decisions > div > form:nth-of-type(2)
+tag: choice
+text:
+| D2 Multi-AZ: Pilots single-AZ
+note:
+| first → then
+| second line, with a comma
+ANNOTATION 6 of 7
+element_uid: 7
+element_selector: section#decisions > div > form:nth-of-type(3)
+tag: choice
+text:
+| D3 staging: On demand
+ANNOTATION 7 of 7
+element_uid: 8
+element_selector: section#decisions > div > form:nth-of-type(4)
+tag: choice
+text:
+| D4 login: Other provider
+note:
+| Let's look up another provider: one that is free up to 1M users.
+END ANNOTATIONS
+END LAVISH RESULT (7 of 7)

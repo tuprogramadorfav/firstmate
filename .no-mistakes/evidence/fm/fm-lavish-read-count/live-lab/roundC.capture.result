@@ -1,0 +1,44 @@
+session:
+  file: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-read.8ZimPK/board/.lavish/review.html
+  status: feedback
+  session_ended: true
+  ended_by: user
+prompts[6]:
+  - uid: "1"
+    prompt: "- starts with a dash"
+    selector: "tr#tradeoff-staging > td:nth-of-type(2)"
+    tag: td
+    text: $60
+    target:
+      type: table-cell
+      selector: "tr#tradeoff-staging > td:nth-of-type(2)"
+      rowLabel: No standing staging
+      columnLabel: Cost
+      text: $60
+  - uid: "3"
+    prompt: "uid: 99"
+    selector: div#keep-keys > div
+    tag: div
+    text: "Signing keys: the API and the worker run on separate instances with separate roles."
+  - uid: "4"
+    prompt: "123"
+    selector: div#stage-3 > div
+    tag: div
+    text: "Stage 3 scale: about 1,000 companies, read replica, more tasks."
+  - uid: "5"
+    prompt: "D1 hosting: Scale-ready AWS - note: path C:\\new\\table stays literal\n\nContext data:\n{\n  \"question\": \"D1-hosting\",\n  \"answer\": \"Scale-ready AWS\",\n  \"note\": \"path C:\\\\new\\\\table stays literal\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(1)"
+    tag: choice
+    text: "D1 hosting: Scale-ready AWS"
+  - uid: "6"
+    prompt: "D3 staging: On demand\n\nContext data:\n{\n  \"question\": \"D3-staging\",\n  \"answer\": \"On demand\",\n  \"note\": \"\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(3)"
+    tag: choice
+    text: "D3 staging: On demand"
+  - uid: ""
+    prompt: "Wrapping up: ship it."
+    selector: ""
+    tag: message
+    text: Freeform message
+next_step: This was the last feedback before the user ended the session. Stop polling /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-read.8ZimPK/board/.lavish/review.html and do not reopen it - deliver any remaining updates directly in this conversation instead. Only run `lavish-axi /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-read.8ZimPK/board/.lavish/review.html --reopen` if the user explicitly asks for further review or something genuinely important needs their visual attention.
+dom_snapshot: "uid=7 body \"Lab review board Signing keys: the API and the worker run on separate instances \"\n  uid=8 h1 \"Lab review board\"\n  uid=9 section \"Signing keys: the API and the worker run on separate instances with separate rol\"\n    uid=10 div \"Signing keys: the API and the worker run on separate instances with separate rol\"\n      uid=3 div \"Signing keys: the API and the worker run on separate instances with separate rol\"\n    uid=11 div \"Stage 3 scale: about 1,000 companies, read replica, more tasks.\"\n      uid=4 div \"Stage 3 scale: about 1,000 companies, read replica, more tasks.\"\n  uid=12 table \"Saving Cost One API instance, no load balancer $0 No standing staging $60\"\n    uid=13 thead \"Saving Cost\"\n      uid=14 tr \"Saving Cost\"\n        uid=15 th \"Saving\"\n        uid=16 th \"Cost\"\n    uid=17 tbody \"One API instance, no load balancer $0 No standing staging $60\"\n      uid=18 tr \"One API instance, no load balancer $0\"\n        uid=19 td \"One API instance, no load balancer\"\n        uid=20 td \"$0\"\n      uid=21 tr \"No standing staging $60\"\n        uid=22 td \"No standing staging\"\n        uid=1 td \"$60\"\n  uid=23 section \"Lean AWS Scale-ready AWS Queue this answer Pilots single-AZ Always Multi-AZ Queu\"\n    uid=24 div \"Lean AWS Scale-ready AWS Queue this answer Pilots single-AZ Always Multi-AZ Queu\"\n      uid=5 form \"Lean AWS Scale-ready AWS Queue this answer\"\n        uid=25 label \"Lean AWS\"\n          uid=26 input\n        uid=27 label \"Scale-ready AWS\"\n          uid=28 input\n        uid=29 textarea\n        uid=30 button \"Queue this answer\"\n      uid=31 form \"Pilots single-AZ Always Multi-AZ Queue this answer\"\n        uid=32 label \"Pilots single-AZ\"\n          uid=33 input\n        uid=34 label \"Always Multi-AZ\"\n          uid=35 input\n        uid=36 textarea\n        uid=37 button \"Queue this answer\"\n      uid=6 form \"On demand Always on Queue this answer\"\n        uid=38 label \"On demand\"\n          uid=39 input\n        uid=40 label \"Always on\"\n          uid=41 input\n        uid=42 textarea\n        uid=43 button \"Queue this answer\"\n      uid=44 form \"Cognito Other provider Queue this answer\"\n        uid=45 label \"Cognito\"\n          uid=46 input\n        uid=47 label \"Other provider\"\n          uid=48 input\n        uid=49 textarea\n        uid=50 button \"Queue this answer\"\n  uid=51 script \"function queueChoice(event, label, question) { event.preventDefault(); const for\"\n  uid=52 script"

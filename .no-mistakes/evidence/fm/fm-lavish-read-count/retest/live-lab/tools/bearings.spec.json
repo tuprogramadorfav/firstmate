@@ -1,0 +1,19 @@
+{
+ "waitFor": "/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.LH1pBJ/state/procevent-inbox/lavish-d2bafeaf50035cb5.1.result",
+ "calls": [
+  {
+   "question": "lab-hosting-decision",
+   "answer": "scale",
+   "note": "¿Por qué no? Está bien → pero cuesta"
+  },
+  {
+   "question": "lab-login-decision",
+   "answer": "cognito",
+   "note": "Keep it. Context data: {\"note\": \"x\"} was my wording"
+  }
+ ],
+ "dispatch": [
+  "lab-task-a",
+  "lab-task-b"
+ ]
+}

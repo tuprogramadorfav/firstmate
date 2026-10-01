@@ -1,0 +1,18 @@
+{
+ "waitFor": "/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.LH1pBJ/state/procevent-inbox/lavish-9c28a6d6396da724.3.result",
+ "annotations": [
+  {
+   "selector": "#tradeoff-oneapi > td:nth-of-type(2)",
+   "comment": "Is $0 right?"
+  }
+ ],
+ "choices": [
+  {
+   "question": "D3-staging",
+   "answer": "Always on",
+   "note": "último: «sí»"
+  }
+ ],
+ "message": "Wrapping up: ship it.",
+ "end": true
+}

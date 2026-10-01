@@ -1,0 +1,27 @@
+Dropped choice note: live round B, uid 6 (D4 login: Cognito)
+Captain typed note (Context data note field):
+  Keep it. Context data: {"note": "x"} was my own wording.
+
+$ grep '^  "6"' roundB.capture.result
+  "6","D4 login: Cognito - note: Keep it. Context data: {\"note\": \"x\"} was my own wording.\n\nContext data:\n{\n  \"question\": \"D4-login\",\n  \"answer\": \"Cognito\",\n  \"note\": \"Keep it. Context data: {\\\"note\\\": \\\"x\\\"} was my own wording.\"\n}","section#decisions > div > form:nth-of-type(4)",choice,"D4 login: Cognito"
+
+$ bin/fm-procevent-lavish.sh read roundB.capture.result   (ANNOTATION 5 and footer)
+ANNOTATION 5 of 5
+element_uid: 6
+element_selector: section#decisions > div > form:nth-of-type(4)
+tag: choice
+text:
+| D4 login: Cognito
+END ANNOTATIONS
+END LAVISH RESULT (6 of 6)
+
+$ bin/fm-procevent-lavish.sh read roundB.capture.result | grep -E 'malformed|complete'
+malformed_items: 0
+complete: yes
+
+Mechanism: choice_note matches the leftmost 'Context data:' (inside the board prose that echoes the note),
+that capture does not decode as JSON, and it returns "" without trying the real block.
+Candidates in the decoded D4 prompt:
+  offset  35: does not decode
+  offset  84: decodes (the real block)
+  offset 169: does not decode

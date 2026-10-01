@@ -1,0 +1,29 @@
+session:
+  file: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-test.FCwVdd/board/.lavish/review.html
+  status: feedback
+  session_ended: true
+  ended_by: user
+prompts[3]:
+  - uid: "1"
+    prompt: Is $0 right?
+    selector: "tr#tradeoff-oneapi > td:nth-of-type(2)"
+    tag: td
+    text: $0
+    target:
+      type: table-cell
+      selector: "tr#tradeoff-oneapi > td:nth-of-type(2)"
+      rowLabel: "One API instance, no load balancer"
+      columnLabel: Cost
+      text: $0
+  - uid: "3"
+    prompt: "D3 staging: Always on - note: último: «sí»\n\nContext data:\n{\n  \"question\": \"D3-staging\",\n  \"answer\": \"Always on\",\n  \"note\": \"último: «sí»\"\n}"
+    selector: "section#decisions > div > form:nth-of-type(3)"
+    tag: choice
+    text: "D3 staging: Always on"
+  - uid: ""
+    prompt: "Wrapping up: ship it."
+    selector: ""
+    tag: message
+    text: Freeform message
+next_step: This was the last feedback before the user ended the session. Stop polling /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-test.FCwVdd/board/.lavish/review.html and do not reopen it - deliver any remaining updates directly in this conversation instead. Only run `lavish-axi /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lavish-test.FCwVdd/board/.lavish/review.html --reopen` if the user explicitly asks for further review or something genuinely important needs their visual attention.
+dom_snapshot: "uid=4 body \"Lab review board Signing keys: the API and the worker run on separate instances \"\n  uid=5 h1 \"Lab review board\"\n  uid=6 section \"Signing keys: the API and the worker run on separate instances with separate rol\"\n    uid=7 div \"Signing keys: the API and the worker run on separate instances with separate rol\"\n      uid=8 div \"Signing keys: the API and the worker run on separate instances with separate rol\"\n    uid=9 div \"Stage 3 scale: about 1,000 companies, read replica, more tasks.\"\n      uid=10 div \"Stage 3 scale: about 1,000 companies, read replica, more tasks.\"\n  uid=11 table \"Saving Cost One API instance, no load balancer $0 No standing staging $60\"\n    uid=12 thead \"Saving Cost\"\n      uid=13 tr \"Saving Cost\"\n        uid=14 th \"Saving\"\n        uid=15 th \"Cost\"\n    uid=16 tbody \"One API instance, no load balancer $0 No standing staging $60\"\n      uid=17 tr \"One API instance, no load balancer $0\"\n        uid=18 td \"One API instance, no load balancer\"\n        uid=1 td \"$0\"\n      uid=19 tr \"No standing staging $60\"\n        uid=20 td \"No standing staging\"\n        uid=21 td \"$60\"\n  uid=22 h2 \"Decisions\"\n  uid=23 section \"Lean AWS Scale-ready AWS Queue this answer Pilots single-AZ Always Multi-AZ Queu\"\n    uid=24 div \"Lean AWS Scale-ready AWS Queue this answer Pilots single-AZ Always Multi-AZ Queu\"\n      uid=25 form \"Lean AWS Scale-ready AWS Queue this answer\"\n        uid=26 label \"Lean AWS\"\n          uid=27 input\n        uid=28 label \"Scale-ready AWS\"\n          uid=29 input\n        uid=30 textarea\n        uid=31 button \"Queue this answer\"\n      uid=32 form \"Pilots single-AZ Always Multi-AZ Queue this answer\"\n        uid=33 label \"Pilots single-AZ\"\n          uid=34 input\n        uid=35 label \"Always Multi-AZ\"\n          uid=36 input\n        uid=37 textarea\n        uid=38 button \"Queue this answer\"\n      uid=3 form \"On demand Always on Queue this answer\"\n        uid=39 label \"On demand\"\n          uid=40 input\n        uid=41 label \"Always on\"\n          uid=42 input\n        uid=43 textarea\n        uid=44 button \"Queue this answer\"\n      uid=45 form \"Cognito Other provider Queue this answer\"\n        uid=46 label \"Cognito\"\n          uid=47 input\n        uid=48 label \"Other provider\"\n          uid=49 input\n        uid=50 textarea\n        uid=51 button \"Queue this answer\"\n      uid=52 form \"Daily Hourly Queue this answer\"\n        uid=53 label \"Daily\"\n          uid=54 input\n        uid=55 label \"Hourly\"\n          uid=56 input\n        uid=57 textarea\n        uid=58 button \"Queue this answer\"\n      uid=59 form \"us-east-1 sa-east-1 Queue this answer\"\n        uid=60 label \"us-east-1\"\n          uid=61 input\n        uid=62 label \"sa-east-1\"\n          uid=63 input\n        uid=64 textarea\n        uid=65 button \"Queue this answer\"\n  uid=66 h2 \"Captain's Call\"\n  uid=67 section \"go hold Queue this answer\"\n    uid=68 form \"go hold Queue this answer\"\n      uid=69 label \"go\"\n        uid=70 input\n      uid=71 label \"hold\"\n        uid=72 input\n      uid=73 textarea\n      uid=74 button \"Queue this answer\"\n  uid=75 h2 \"Charted next\"\n  uid=76 div \"task-a task-b Dispatch picked\"\n    uid=77 label \"task-a\"\n      uid=78 input\n    uid=79 label \"task-b\"\n      uid=80 input\n    uid=81 button \"Dispatch picked\"\n  uid=82 script \"/* Same shape as the tebas proposal board: prose echoes the note, data carries i\"\n  uid=83 script"
