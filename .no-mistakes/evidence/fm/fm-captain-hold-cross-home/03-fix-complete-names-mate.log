@@ -1,0 +1,57 @@
+
+## setup: two marked lab homes; the mate home is a firstmate checkout
+
+$ FM_HOME=<main> env FM_SECONDMATE_CHARTER=Own tebas product-management decisions. FM_SECONDMATE_SCOPE=tebas product management bin/fm-home-seed.sh tebas-pm /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.drsvnT/treehouse/firstmate-lab/1/firstmate --no-projects
+scaffolded: <lab>/main/data/tebas-pm/brief.md (secondmate charter)
+home=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.drsvnT/treehouse/firstmate-lab/1/firstmate
+[exit 0]
+
+--- main data/secondmates.md ---
+- tebas-pm - Own tebas product-management decisions. (home: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.drsvnT/treehouse/firstmate-lab/1/firstmate; scope: tebas product management; projects: ; added 2026-09-30)
+
+--- mate .fm-secondmate-home ---
+tebas-pm
+
+## setup: the finished tebas-tech-proposal scout in the main home
+
+scout endpoint: real Herdr pane w5:p2 in lab session fm-lab-crosshome-66914-12100
+
+## the scout's captain call is held in the main home and attested by complete
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh hold tebas-llm-provider --title Captain call tebas-llm-provider --reason captain must decide tebas-llm-provider --repo tebas --origin tebas-tech-proposal --until 2026-12-31
+tebas-llm-provider
+[exit 0]
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh complete tebas-tech-proposal tebas-llm-provider
+complete: tebas-tech-proposal captain-call inventory reviewed (tebas-llm-provider)
+[exit 0]
+
+--- main state/tebas-tech-proposal.meta attestation ---
+decisions_reviewed=1
+decision_keys=tebas-llm-provider
+
+## the call is handed to the tebas-pm secondmate home
+
+$ FM_HOME=<main> bin/fm-backlog-handoff.sh tebas-pm tebas-llm-provider
+handed off 1 item(s) to tebas-pm: tebas-llm-provider
+  into /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.drsvnT/treehouse/firstmate-lab/1/firstmate/data/backlog.md
+error: handed off work to secondmate tebas-pm, but no live receiver endpoint is recorded; the destination backlog is durable and the receiver was not woken
+[exit 1]
+
+$ FM_HOME=<mate> bin/fm-captain-hold.sh open tebas-llm-provider
+[exit 0]
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh open tebas-llm-provider --distinguish-absent
+[exit 3]
+
+## complete is re-run after the handoff (a later review pass)
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh complete tebas-tech-proposal tebas-llm-provider
+complete: tebas-tech-proposal captain-call inventory reviewed (tebas-llm-provider) [held in a registered secondmate home: tebas-llm-provider=tebas-pm]
+[exit 0]
+decisions_reviewed=1
+decision_keys=tebas-llm-provider
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh verify tebas-tech-proposal
+verified: tebas-tech-proposal captain-call inventory
+[exit 0]

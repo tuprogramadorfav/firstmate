@@ -1,0 +1,98 @@
+
+## setup: two marked lab homes; the mate home is a firstmate checkout
+
+$ FM_HOME=<main> env FM_SECONDMATE_CHARTER=Own tebas product-management decisions. FM_SECONDMATE_SCOPE=tebas product management bin/fm-home-seed.sh tebas-pm /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AtQWNr/treehouse/firstmate-lab/1/firstmate --no-projects
+scaffolded: <lab>/main/data/tebas-pm/brief.md (secondmate charter)
+home=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.AtQWNr/treehouse/firstmate-lab/1/firstmate
+[exit 0]
+
+--- main data/secondmates.md ---
+- tebas-pm - Own tebas product-management decisions. (home: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.AtQWNr/treehouse/firstmate-lab/1/firstmate; scope: tebas product management; projects: ; added 2026-09-30)
+
+--- mate .fm-secondmate-home ---
+tebas-pm
+
+## setup: the finished tebas-tech-proposal scout in the main home
+
+scout endpoint: real Herdr pane w7:p2 in lab session fm-lab-crosshome-66914-12100
+
+## the scout's captain call is held in the main home and attested by complete
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh hold tebas-llm-provider --title Captain call tebas-llm-provider --reason captain must decide tebas-llm-provider --repo tebas --origin tebas-tech-proposal --until 2026-12-31
+tebas-llm-provider
+[exit 0]
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh complete tebas-tech-proposal tebas-llm-provider
+complete: tebas-tech-proposal captain-call inventory reviewed (tebas-llm-provider)
+[exit 0]
+
+--- main state/tebas-tech-proposal.meta attestation ---
+decisions_reviewed=1
+decision_keys=tebas-llm-provider
+
+## the call is handed to the tebas-pm secondmate home
+
+$ FM_HOME=<main> bin/fm-backlog-handoff.sh tebas-pm tebas-llm-provider
+handed off 1 item(s) to tebas-pm: tebas-llm-provider
+  into /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.AtQWNr/treehouse/firstmate-lab/1/firstmate/data/backlog.md
+error: handed off work to secondmate tebas-pm, but no live receiver endpoint is recorded; the destination backlog is durable and the receiver was not woken
+[exit 1]
+
+$ FM_HOME=<mate> bin/fm-captain-hold.sh open tebas-llm-provider
+[exit 0]
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh open tebas-llm-provider --distinguish-absent
+[exit 3]
+
+## ADVERSARIAL: tebas-pm is no longer registered in the main home
+
+--- main data/secondmates.md ---
+
+## the primary cleans up the finished investigation
+
+$ FM_HOME=<main> bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory <lab>/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing, and no registered secondmate home holds it for the captain or records its captain answer
+[exit 1]
+
+$ FM_HOME=<main> bin/fm-teardown.sh tebas-tech-proposal
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>/main
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory <lab>/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing, and no registered secondmate home holds it for the captain or records its captain answer
+REFUSED: scout task tebas-tech-proposal has not passed the captain-call completion gate.
+Inventory its report and any visual review through bin/fm-captain-hold.sh before teardown.
+[exit 1]
+
+--- after teardown ---
+main scout record state/tebas-tech-proposal.meta: present
+scout Herdr pane w7:p2: still open (w7:p2)
+main backlog mentions tebas-llm-provider: 0
+
+$ FM_HOME=<main> bin/fm-tasks-axi.sh show tebas-tech-proposal
+task:
+  id: tebas-tech-proposal
+  title: Investigate the tebas tech proposal
+  state: in_flight
+  blocked: no
+  blocked_by: none
+  held: no
+  hold_reason: "-"
+  hold_kind: "-"
+  hold_until: "-"
+  kind: scout
+  repo: tebas
+  priority: "-"
+  created: 2026-09-30
+  closed: "-"
+  deps: none
+  links: none
+  body: ""
+[exit 0]
+
+$ FM_HOME=<mate> bin/fm-captain-hold.sh open tebas-llm-provider
+[exit 0]
