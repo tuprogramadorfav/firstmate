@@ -1,0 +1,24 @@
+### HEAD, PATH bash 5: FM_TEST_ONLY=test_backend_source_shell_portable bash tests/fm-backend.test.sh
+ok - zsh: fm_backend_source loads every adapter with its sibling libs and rejects unknown backends
+ok - /run/current-system/sw/bin/bash: fm_backend_source loads every adapter with its sibling libs and rejects unknown backends
+exit=0
+
+### HEAD, CI macos-stock-bash step: FM_TEST_ONLY=test_backend_source_shell_portable FM_TEST_BASH=/bin/bash /bin/bash tests/fm-backend.test.sh
+ok - zsh: fm_backend_source loads every adapter with its sibling libs and rejects unknown backends
+ok - /bin/bash: fm_backend_source loads every adapter with its sibling libs and rejects unknown backends
+exit=0 ok-count=2
+
+### aedb7bbf bin/ with HEAD's strengthened test, FM_TEST_BASH=/bin/bash
+not ok - zsh: fm_backend_source tmux should load the adapter and its sibling libs
+
+exit=
+
+### 4ebc5b4b bin/ with HEAD's strengthened test, FM_TEST_BASH=/bin/bash
+ok - zsh: fm_backend_source loads every adapter with its sibling libs and rejects unknown backends
+not ok - /bin/bash: fm_backend_source herdr should load the adapter and its sibling libs
+<tmp>/4ebc5b4b/bin/backends/herdr.sh: command substitution: line 71: syntax error near unexpected token `newline'
+<tmp>/4ebc5b4b/bin/backends/herdr.sh: command substitution: line 71: `d=${BASH_SOURCE[0]:-$0}; case $d in */*'
+<tmp>/4ebc5b4b/bin/backends/herdr.sh: line 79:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-composer-lib.sh: No such file or directory
+<tmp>/4ebc5b4b/bin/backends/herdr.sh: line 87:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-transition-lib.sh: No such file or directory
+<tmp>/4ebc5b4b/bin/backends/herdr.sh: line 94:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-agent-process-lib.sh: No such file or directory
+exit=

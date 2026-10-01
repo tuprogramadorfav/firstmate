@@ -1,0 +1,17 @@
+================ HEAD under /bin/zsh -f (interactive-shell style: source + call adapter functions)
+fm_backend_source herdr rc=0
+FM_BACKEND_HERDR_ROOT=/Users/programanding/.no-mistakes/worktrees/ae59da4a10c5/01M3TNCM6GTQT7S0F2EK5TRVSR
+send_text_line rc=0
+--- fm_backend_herdr_capture fm-lab-zshsrc-58392-31225:w1:p1 4:
+❯ echo LIVE_HEAD_ZSH_$((6*7))
+LIVE_HEAD_ZSH_42
+/private/tmp
+❯
+capture rc=0
+fm_composer_normalize_spaces_var:1: bad substitution
+composer_state rc=0 state=  (classified by fm-composer-lib.sh fm_composer_classify_screen)
+fm_composer_normalize_spaces_var:1: bad substitution
+composer_state after typing unsent text: rc=0 state=
+fm_composer_normalize_spaces_var:1: bad substitution
+composer_state after C-u: state=
+PATH intact: /usr/bin/dirname

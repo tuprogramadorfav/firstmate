@@ -1,0 +1,17 @@
+=== commit aedb7bbf, shell /bin/zsh: fm_backend_source herdr
+rc=1
+fm_transition_policy MISSING
+=== commit aedb7bbf, shell /bin/bash: fm_backend_source herdr
+rc=0
+fm_transition_policy defined
+=== commit 4ebc5b4b, shell /bin/zsh: fm_backend_source herdr
+rc=0
+fm_transition_policy defined
+=== commit 4ebc5b4b, shell /bin/bash: fm_backend_source herdr
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-nm-old.Vx1sYt/4ebc5b4b/bin/backends/herdr.sh: command substitution: line 71: syntax error near unexpected token `newline'
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-nm-old.Vx1sYt/4ebc5b4b/bin/backends/herdr.sh: command substitution: line 71: `d=${BASH_SOURCE[0]:-$0}; case $d in */*'
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-nm-old.Vx1sYt/4ebc5b4b/bin/backends/herdr.sh: line 79:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-composer-lib.sh: No such file or directory
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-nm-old.Vx1sYt/4ebc5b4b/bin/backends/herdr.sh: line 87:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-transition-lib.sh: No such file or directory
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-nm-old.Vx1sYt/4ebc5b4b/bin/backends/herdr.sh: line 94:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-agent-process-lib.sh: No such file or directory
+rc=0
+fm_transition_policy MISSING

@@ -1,0 +1,21 @@
+=== /bin/zsh
+abs path from cwd=/ : rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+inside a function   : rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+relative ./fm-backend.sh from bin/: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+relative bin/fm-backend.sh, then cd away before sourcing adapter: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+herdr.sh sourced directly (unit-test path), relative: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+herdr.sh sourced directly from its own dir (no slash): rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+=== /bin/bash
+abs path from cwd=/ : rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+inside a function   : rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+relative ./fm-backend.sh from bin/: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+relative bin/fm-backend.sh, then cd away before sourcing adapter: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+herdr.sh sourced directly (unit-test path), relative: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+herdr.sh sourced directly from its own dir (no slash): rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+=== /run/current-system/sw/bin/bash
+abs path from cwd=/ : rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+inside a function   : rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+relative ./fm-backend.sh from bin/: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+relative bin/fm-backend.sh, then cd away before sourcing adapter: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+herdr.sh sourced directly (unit-test path), relative: rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y
+herdr.sh sourced directly from its own dir (no slash): rc=0 root_ok=yes path_ok=yes args=[keep me] transition=y agentproc=y

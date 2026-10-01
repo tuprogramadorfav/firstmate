@@ -1,0 +1,46 @@
+================ HEAD under /bin/zsh -f
+fm_backend_source herdr rc=0
+fm_backend_herdr_version_check:3: read-only variable: status
+================ HEAD under /bin/bash
+fm_backend_source herdr rc=0
+version_check rc=0
+send_text_line rc=0
+--- fm_backend_herdr_capture fm-lab-zshsrc-58392-31225:w1:p1 6:
+/private/tmp
+❯ echo LIVE_HEAD_bin_bash_$((6*7))
+LIVE_HEAD_bin_bash_42
+/private/tmp
+❯
+capture rc=0
+composer_state rc=0 state=empty
+================ aedb7bbf(base) under /bin/zsh -f
+fm_backend_source herdr rc=1
+zsh:2: command not found: fm_backend_herdr_version_check
+version_check rc=127
+zsh:3: command not found: fm_backend_herdr_send_text_line
+send_text_line rc=127
+--- fm_backend_herdr_capture fm-lab-zshsrc-58392-31225:w1:p1 6:
+zsh:5: command not found: fm_backend_herdr_capture
+
+capture rc=0
+zsh:6: command not found: fm_backend_herdr_composer_state
+composer_state rc=127 state=
+================ 4ebc5b4b(round1) under /bin/bash
+<old-tree>/4ebc5b4b/bin/backends/herdr.sh: command substitution: line 71: syntax error near unexpected token `newline'
+<old-tree>/4ebc5b4b/bin/backends/herdr.sh: command substitution: line 71: `d=${BASH_SOURCE[0]:-$0}; case $d in */*'
+<old-tree>/4ebc5b4b/bin/backends/herdr.sh: line 79:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-composer-lib.sh: No such file or directory
+<old-tree>/4ebc5b4b/bin/backends/herdr.sh: line 87:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-transition-lib.sh: No such file or directory
+<old-tree>/4ebc5b4b/bin/backends/herdr.sh: line 94:  d= ;; *) d=. ;; esac; cd //../.. && pwd)/bin/fm-agent-process-lib.sh: No such file or directory
+fm_backend_source herdr rc=0
+version_check rc=0
+send_text_line rc=0
+--- fm_backend_herdr_capture fm-lab-zshsrc-58392-31225:w1:p1 6:
+LIVE_HEAD_bin_bash_42
+/private/tmp
+❯ echo LIVE_4ebc5b4b_round1__bin_bash_$((6*7))
+LIVE_4ebc5b4b_round1__bin_bash_42
+/private/tmp
+❯
+capture rc=0
+<old-tree>/4ebc5b4b/bin/backends/herdr.sh: line 3205: fm_composer_classify_screen: command not found
+composer_state rc=0 state=

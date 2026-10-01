@@ -1,0 +1,21 @@
+=== shell: /bin/zsh (zsh 5.9)
+- tmux   rc=0 fm_composer_strip_ghost fm_agent_process_classify_name fm_cursor_canonical_path fm_gemini_path_is_gemini fm_tmux_strip_ghost  /usr/bin/dirname 
+- herdr  rc=0 fm_composer_strip_ghost fm_transition_policy fm_agent_process_classify_name fm_cursor_canonical_path fm_gemini_path_is_gemini  /usr/bin/dirname 
+- zellij rc=0 fm_composer_strip_ghost fm_backend_hometag  /usr/bin/dirname 
+- orca   rc=0 fm_composer_strip_ghost  /usr/bin/dirname 
+- cmux   rc=0 fm_composer_strip_ghost fm_backend_hometag  /usr/bin/dirname 
+- bogus  error: unknown backend 'bogus' (known: tmux herdr zellij orca cmux) rc=1 
+=== shell: /bin/bash (bash 3.2.57(1)-release)
+- tmux   rc=0 fm_composer_strip_ghost fm_agent_process_classify_name fm_cursor_canonical_path fm_gemini_path_is_gemini fm_tmux_strip_ghost  /usr/bin/dirname 
+- herdr  rc=0 fm_composer_strip_ghost fm_transition_policy fm_agent_process_classify_name fm_cursor_canonical_path fm_gemini_path_is_gemini  /usr/bin/dirname 
+- zellij rc=0 fm_composer_strip_ghost fm_backend_hometag  /usr/bin/dirname 
+- orca   rc=0 fm_composer_strip_ghost  /usr/bin/dirname 
+- cmux   rc=0 fm_composer_strip_ghost fm_backend_hometag  /usr/bin/dirname 
+- bogus  error: unknown backend 'bogus' (known: tmux herdr zellij orca cmux) rc=1 
+=== shell: /run/current-system/sw/bin/bash (bash 5.3.9(1)-release)
+- tmux   rc=0 fm_composer_strip_ghost fm_agent_process_classify_name fm_cursor_canonical_path fm_gemini_path_is_gemini fm_tmux_strip_ghost  /usr/bin/dirname 
+- herdr  rc=0 fm_composer_strip_ghost fm_transition_policy fm_agent_process_classify_name fm_cursor_canonical_path fm_gemini_path_is_gemini  /usr/bin/dirname 
+- zellij rc=0 fm_composer_strip_ghost fm_backend_hometag  /usr/bin/dirname 
+- orca   rc=0 fm_composer_strip_ghost  /usr/bin/dirname 
+- cmux   rc=0 fm_composer_strip_ghost fm_backend_hometag  /usr/bin/dirname 
+- bogus  error: unknown backend 'bogus' (known: tmux herdr zellij orca cmux) rc=1 
