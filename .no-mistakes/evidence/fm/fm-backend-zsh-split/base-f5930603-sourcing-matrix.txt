@@ -1,0 +1,31 @@
+=== BASE f5930603 (pre-fix) | /bin/zsh (zsh 5.9)
+tmux   rc=0 missing=[fm_composer_strip_ghost fm_cursor_canonical_path fm_gemini_path_is_gemini] dirname=/usr/bin/dirname stderr_lines=5
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-tmux-lib.sh:.:49: no such file or directory: ./fm-composer-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-tmux-lib.sh:.:51: no such file or directory: ./fm-cursor-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-session-lock-lib.sh:.:24: no such file or directory: ./fm-cursor-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-agent-process-lib.sh:.:19: no such file or directory: ./fm-session-lock-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-agent-process-lib.sh:.:21: no such file or directory: ./fm-gemini-lib.sh
+herdr  rc=0 missing=[fm_composer_strip_ghost fm_transition_policy fm_agent_process_classify_name fm_cursor_canonical_path fm_gemini_path_is_gemini] dirname=/usr/bin/dirname stderr_lines=3
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/herdr.sh:.:79: no such file or directory: //bin/fm-composer-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/herdr.sh:.:87: no such file or directory: //bin/fm-transition-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/herdr.sh:.:94: no such file or directory: //bin/fm-agent-process-lib.sh
+zellij rc=0 missing=[fm_backend_hometag fm_composer_strip_ghost] dirname=/usr/bin/dirname stderr_lines=2
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/zellij.sh:.:120: no such file or directory: //bin/fm-backend-hometag-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/zellij.sh:.:125: no such file or directory: //bin/fm-composer-lib.sh
+orca   rc=0 missing=[fm_composer_strip_ghost] dirname=/usr/bin/dirname stderr_lines=1
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/orca.sh:.:13: no such file or directory: ./../fm-composer-lib.sh
+cmux   rc=0 missing=[fm_backend_hometag fm_composer_strip_ghost] dirname=/usr/bin/dirname stderr_lines=2
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/cmux.sh:.:115: no such file or directory: //bin/fm-backend-hometag-lib.sh
+         stderr: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/backends/cmux.sh:.:121: no such file or directory: //bin/fm-composer-lib.sh
+=== BASE f5930603 (pre-fix) | /bin/bash (3.2.57(1)-release)
+tmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+herdr  rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+zellij rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+orca   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+cmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+=== BASE f5930603 (pre-fix) | /run/current-system/sw/bin/bash (5.3.9(1)-release)
+tmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+herdr  rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+zellij rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+orca   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+cmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0

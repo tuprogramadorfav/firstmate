@@ -1,0 +1,17 @@
+### HEAD regression test run against BASE f5930603 bin/ (pre-fix) - must FAIL
+$ FM_TEST_ONLY=test_backend_source_shell_portable FM_TEST_BASH=/bin/bash /bin/bash tests/fm-backend.test.sh
+not ok - zsh: fm_backend_source tmux should load the adapter and its sibling libs
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-tmux-lib.sh:.:49: no such file or directory: ./fm-composer-lib.sh
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-tmux-lib.sh:.:51: no such file or directory: ./fm-cursor-lib.sh
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-session-lock-lib.sh:.:24: no such file or directory: ./fm-cursor-lib.sh
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-agent-process-lib.sh:.:19: no such file or directory: ./fm-session-lock-lib.sh
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fmz/base-f5930603/bin/fm-agent-process-lib.sh:.:21: no such file or directory: ./fm-gemini-lib.sh
+exit=
+
+### CI step replay at HEAD 4d49cedb (macos-stock-bash job, PATH=/bin:/usr/bin:/usr/sbin:/sbin, set -e)
+ok - zsh: fm_backend_source loads every adapter with its sibling libs and rejects unknown backends
+ok - /bin/bash: fm_backend_source loads every adapter with its sibling libs and rejects unknown backends
+ok - zsh: fm_backend_source keeps PATH intact while loading a backend adapter
+CI step: portable_count=3 -> PASS
+exit=0
+base-tree regression test exit code: 1 (non-zero = test fails pre-fix, as required)

@@ -1,0 +1,18 @@
+=== HEAD 4d49cedb | /bin/zsh (zsh 5.9)
+tmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+herdr  rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+zellij rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+orca   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+cmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+=== HEAD 4d49cedb | /bin/bash (3.2.57(1)-release)
+tmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+herdr  rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+zellij rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+orca   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+cmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+=== HEAD 4d49cedb | /run/current-system/sw/bin/bash (5.3.9(1)-release)
+tmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+herdr  rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+zellij rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+orca   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0
+cmux   rc=0 missing=[] dirname=/usr/bin/dirname stderr_lines=0

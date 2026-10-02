@@ -1,0 +1,70 @@
+herdr: herdr 0.9.1  session: fm-lab-zshlive-38232-4609
+lab pane target: fm-lab-zshlive-38232-4609:w1:p1
+================ HEAD under /bin/zsh -f (interactive zsh user)
+fm_backend_source herdr rc=0
+  sibling fn fm_transition_policy: defined
+  sibling fn fm_agent_process_classify_name: defined
+  sibling fn fm_composer_classify_screen: defined
+send_text_line rc=0
+--- fm_backend_herdr_capture fm-lab-zshlive-38232-4609:w1:p1 4:
+❯ echo LIVE_HEAD_under__bin_zsh__f__interactive_zsh_user__$((6*7))
+LIVE_HEAD_under__bin_zsh__f__interactive_zsh_user__42
+/private/tmp
+❯capture rc=0
+================ HEAD under /bin/bash 3.2
+fm_backend_source herdr rc=0
+  sibling fn fm_transition_policy: defined
+  sibling fn fm_agent_process_classify_name: defined
+  sibling fn fm_composer_classify_screen: defined
+send_text_line rc=0
+--- fm_backend_herdr_capture fm-lab-zshlive-38232-4609:w1:p1 4:
+❯ echo LIVE_HEAD_under__bin_bash_3_2_$((6*7))
+LIVE_HEAD_under__bin_bash_3_2_42
+/private/tmp
+❯capture rc=0
+================ HEAD under bash 5
+fm_backend_source herdr rc=0
+  sibling fn fm_transition_policy: defined
+  sibling fn fm_agent_process_classify_name: defined
+  sibling fn fm_composer_classify_screen: defined
+send_text_line rc=0
+--- fm_backend_herdr_capture fm-lab-zshlive-38232-4609:w1:p1 4:
+❯ echo LIVE_HEAD_under_bash_5_$((6*7))
+LIVE_HEAD_under_bash_5_42
+/private/tmp
+❯capture rc=0
+================ BASE f5930603 (pre-fix) under /bin/zsh -f
+<base-tree>/bin/backends/herdr.sh:.:79: no such file or directory: //bin/fm-composer-lib.sh
+<base-tree>/bin/backends/herdr.sh:.:87: no such file or directory: //bin/fm-transition-lib.sh
+<base-tree>/bin/backends/herdr.sh:.:94: no such file or directory: //bin/fm-agent-process-lib.sh
+fm_backend_source herdr rc=0
+  sibling fn fm_transition_policy: MISSING
+  sibling fn fm_agent_process_classify_name: MISSING
+  sibling fn fm_composer_classify_screen: MISSING
+send_text_line rc=0
+--- fm_backend_herdr_capture fm-lab-zshlive-38232-4609:w1:p1 4:
+❯ echo LIVE_BASE_f5930603__pre_fix__under__bin_zsh__f_$((6*7))
+LIVE_BASE_f5930603__pre_fix__under__bin_zsh__f_42
+/private/tmp
+❯capture rc=0
+================ fm-peek.sh zshprobe 4  via: /bin/bash
+❯ echo PEEK_MARKER_$((40+2))
+PEEK_MARKER_42
+/private/tmp
+❯
+rc=0
+================ fm-peek.sh zshprobe 4  via: /run/current-system/sw/bin/bash
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+❯ echo PEEK_MARKER_$((40+2))
+PEEK_MARKER_42
+/private/tmp
+❯
+rc=0
+================ fm-peek.sh zshprobe 4  via: zsh-runs-shebang
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+❯ echo PEEK_MARKER_$((40+2))
+PEEK_MARKER_42
+/private/tmp
+❯
+rc=0
+teardown fm-lab-zshlive-38232-4609: ok

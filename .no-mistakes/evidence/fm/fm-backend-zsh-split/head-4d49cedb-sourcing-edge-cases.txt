@@ -1,0 +1,51 @@
+=== /bin/zsh
+[worktree] abs path, cwd=/, caller args after load=[keep me]: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] source+load inside a function: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] relative ./fm-backend.sh from bin/, then cd / before load: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] herdr.sh sourced directly, relative path: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] herdr.sh sourced from its own dir: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] fm-tmux-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[worktree] fm-agent-process-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[worktree] orca.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] abs path, cwd=/, caller args after load=[keep me]: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] source+load inside a function: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] relative ./fm-backend.sh from bin/, then cd / before load: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] herdr.sh sourced directly, relative path: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] herdr.sh sourced from its own dir: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] fm-tmux-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] fm-agent-process-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] orca.sh sourced directly: rc=0 sibling_funcs_defined=yes
+=== /bin/bash
+[worktree] abs path, cwd=/, caller args after load=[keep me]: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] source+load inside a function: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] relative ./fm-backend.sh from bin/, then cd / before load: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] herdr.sh sourced directly, relative path: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] herdr.sh sourced from its own dir: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] fm-tmux-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[worktree] fm-agent-process-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[worktree] orca.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] abs path, cwd=/, caller args after load=[keep me]: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] source+load inside a function: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] relative ./fm-backend.sh from bin/, then cd / before load: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] herdr.sh sourced directly, relative path: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] herdr.sh sourced from its own dir: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] fm-tmux-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] fm-agent-process-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] orca.sh sourced directly: rc=0 sibling_funcs_defined=yes
+=== /run/current-system/sw/bin/bash
+[worktree] abs path, cwd=/, caller args after load=[keep me]: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] source+load inside a function: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] relative ./fm-backend.sh from bin/, then cd / before load: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] herdr.sh sourced directly, relative path: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] herdr.sh sourced from its own dir: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[worktree] fm-tmux-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[worktree] fm-agent-process-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[worktree] orca.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] abs path, cwd=/, caller args after load=[keep me]: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] source+load inside a function: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] relative ./fm-backend.sh from bin/, then cd / before load: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] herdr.sh sourced directly, relative path: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] herdr.sh sourced from its own dir: rc=0 herdr_root_ok=yes transition=y agentproc=y composer=y PATH_ok=yes
+[path-with-spaces] fm-tmux-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] fm-agent-process-lib.sh sourced directly: rc=0 sibling_funcs_defined=yes
+[path-with-spaces] orca.sh sourced directly: rc=0 sibling_funcs_defined=yes
