@@ -1,0 +1,50 @@
+# Scenario 2 (trace on): same relaunch with config/trace-context enabled and frozen by bin/fm-session-start.sh
+# Product: firstmate @ ec707311, real herdr, real Claude Code; lab session lock: 17874; .trace-context-effective: on
+
+$ bin/fm-spawn.sh labrl-on ... --harness claude --model sonnet --effort low --backend herdr
+spawned labrl-on harness=claude kind=ship mode=direct-PR yolo=off window=fm-lab-relaunchpr-23278-2780:w2:p2 worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/2/notes
+
+$ bin/fm-pr-check.sh labrl-on https://github.com/example/notes/pull/46
+armed: state/labrl-on.check.sh
+
+== state/labrl-on.meta BEFORE relaunch (tail) ==
+    19	herdr_pane_id=w2:p2
+    20	traceparent=00-433c5d867317f0b8b54740acc630c8af-dfbd0b29a3bc8ef8-01
+    21	pr=https://github.com/example/notes/pull/46
+    22	pr_head=54bfe618dd79102a494b5ea19caaf46817cfa51c
+
+$ bin/fm-control.sh labrl-on relaunch --note 'Lab relaunch with a recorded PR and tracing on; nothing changed, keep holding.'
+relaunched labrl-on harness=claude from=claude model=sonnet effort=low backend=herdr endpoint=fm-lab-relaunchpr-23278-2780:w2:p2 worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/2/notes
+
+== state/labrl-on.meta AFTER relaunch (tail) ==
+    18	herdr_tab_id=w2:t2
+    19	herdr_pane_id=w2:p2
+    20	control_relaunch_tx=94106.20261002T065012Z.22249
+    21	traceparent=00-433c5d867317f0b8b54740acc630c8af-dfbd0b29a3bc8ef8-01
+    22	pr=https://github.com/example/notes/pull/46
+    23	pr_head=54bfe618dd79102a494b5ea19caaf46817cfa51c
+
+== fm_pr_poll_artifacts_valid (bin/fm-pr-lib.sh) right after relaunch ==
+poll artifacts: VALID
+
+== watcher arms with the gh stand-in reporting MERGED ==
+arm 1: check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/contributions.check.sh: contributions: observation unavailable for https://github.com/example/notes/pull/46
+arm 2: check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/labrl-on.check.sh: merged
+gh calls in arm 2: api repos/example/notes/pulls/45; api repos/example/notes/pulls/46; pr view https://github.com/example/notes/pull/46 --json state -q .state
+
+== bin/fm-wake-drain.sh after arm 2 ==
+1790923836	3	check	/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/contributions.check.sh	check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/contributions.check.sh: contributions: observation unavailable for https://github.com/example/notes/pull/46
+1790923843	4	check	merged-labrl-on-https://github.com/example/notes/pull/46	check: merge landed: labrl-on https://github.com/example/notes/pull/46 external
+WAKE_ACK_REQUIRED: after handling completes run bin/fm-wake-drain.sh --ack-through 4 --recovery-generation 9498.1790923837.HxZ3Ic
+
+== relaunched worker pane (Herdr w2:p2) ==
+  tate/operational-inbox/1790923817-dd2ed74580d1d3c6.msg' and handle its contents as Firstmate operational input.
+  Read 1 file, ran 1 shell command
+⏺ The inbox is empty, so there was nothing to handle. I appended no status line, as the relaunch note says. Nothing
+  changed and I'm still holding.
+✻ Churned for 5s · done 1:50 AM
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Sonnet 5.5 | Context: 4% used
+  ⏵⏵ auto mode on (shift+tab to cycle) · ← 1 agent

@@ -1,0 +1,85 @@
+# Scenario 1 (trace off): relaunch a live Claude worker whose PR merge poll is armed, then let the watcher poll
+# Product: firstmate @ ec707311 (fix commit), real herdr herdr 0.9.1, real Claude Code 2.1.287 (Claude Code)
+# Lab: marked lab home (bin/fm-lab-home.sh), Herdr lab session fm-lab-relaunchpr-23278-2780 (bin/fm-herdr-lab.sh), gh = local GitHub stand-in
+
+$ bin/fm-spawn.sh labrl-off <lab>/projects/notes --mode direct-PR --yolo off --harness claude --model sonnet --effort low --backend herdr
+warning: herdr presentation parent is absent or ambiguous; using the ordinary flat layout without projection
+spawned labrl-off harness=claude kind=ship mode=direct-PR yolo=off window=fm-lab-relaunchpr-23278-2780:w1:p2 worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/1/notes
+
+$ bin/fm-pr-check.sh labrl-off https://github.com/example/notes/pull/45   (gh stand-in: OPEN, head=54bfe618dd79102a494b5ea19caaf46817cfa51c)
+armed: state/labrl-off.check.sh
+
+== state/labrl-off.meta BEFORE relaunch (tail) ==
+herdr_tab_id=w1:t2
+herdr_pane_id=w1:p2
+pr=https://github.com/example/notes/pull/45
+pr_head=54bfe618dd79102a494b5ea19caaf46817cfa51c
+
+$ bin/fm-control.sh labrl-off relaunch --note 'Lab relaunch with a recorded PR; nothing changed, keep holding.'
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+relaunched labrl-off harness=claude from=claude model=sonnet effort=low backend=herdr endpoint=fm-lab-relaunchpr-23278-2780:w1:p2 worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/1/notes
+
+== state/labrl-off.meta AFTER relaunch ==
+     1	window=fm-lab-relaunchpr-23278-2780:w1:p2
+     2	endpoint_task_id=labrl-off
+     3	worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/1/notes
+     4	project=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/projects/notes
+     5	harness=claude
+     6	kind=ship
+     7	mode=direct-PR
+     8	yolo=off
+     9	branch=fm/labrl-off
+    10	tasktmp=/tmp/fm-labrl-off
+    11	model=sonnet
+    12	effort=low
+    13	busy_gen=g1790923574.89884.4153
+    14	spawn_gen=s1790923574.88630.720
+    15	backend=herdr
+    16	herdr_session=fm-lab-relaunchpr-23278-2780
+    17	herdr_workspace_id=w1
+    18	herdr_tab_id=w1:t2
+    19	herdr_pane_id=w1:p2
+    20	control_relaunch_tx=86044.20261002T064612Z.24818
+    21	pr=https://github.com/example/notes/pull/45
+    22	pr_head=54bfe618dd79102a494b5ea19caaf46817cfa51c
+
+== watcher arm 1 (gh stand-in now reports MERGED) ==
+check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/contributions.check.sh: contributions: observation unavailable for https://github.com/example/notes/pull/45
+(the separate contributions observer woke first: the stand-in does not serve its gh api read)
+
+== bin/fm-wake-drain.sh ==
+1790923594	1	check	/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/contributions.check.sh	check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/contributions.check.sh: contributions: observation unavailable for https://github.com/example/notes/pull/45
+WAKE_ACK_REQUIRED: after handling completes run bin/fm-wake-drain.sh --ack-through 1 --recovery-generation 229.1790923594.8d1P5M
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+
+== watcher arm 2 ==
+check: rearm-resurface
+(re-surfaced the unacknowledged wake; acknowledged with fm-wake-drain.sh --ack-through 1)
+
+== watcher arm 3 ==
+check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/labrl-off.check.sh: merged
+gh calls made by this sweep:
+  gh api repos/example/notes/pulls/45
+  gh pr view https://github.com/example/notes/pull/45 --json state -q .state
+
+== bin/fm-wake-drain.sh after the merged wake ==
+1790923633	2	check	merged-labrl-off-https://github.com/example/notes/pull/45	check: merge landed: labrl-off https://github.com/example/notes/pull/45 external
+
+== poll artifacts after the merge (retired; merge-notified recorded) ==
+labrl-off.pr-poll-merge-notified
+
+== relaunched worker pane (real Claude Code in Herdr pane w1:p2) ==
+ ▐▛███▛█   Claude Code v2.1.287
+▝▜██████▀  Sonnet 5.5 with low effort · Claude Pro
+ ▝▝   ▝▝   /…/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/1/notes
+❯ : Firstmate operational input waiting: read '/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/s
+  tate/operational-inbox/1790923575-7c9993e90b9ec0b5.msg' and handle its contents as Firstmate operational input.
+  Read 1 file, ran 1 shell command
+⏺ Acknowledged the relaunch note: the inbox is empty, I'm on branch fm/labrl-off, and I've made no changes, so I'm still
+  holding.
+✻ Churned for 5s · done 1:46 AM
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Sonnet 5.5 | Context: 4% used
+  ⏵⏵ auto mode on (shift+tab to cycle) · ← 1 agent

@@ -1,0 +1,52 @@
+# Scenario 3 (adversarial / bug reproduction): the same live flow with the BASE commit 241d4617's scripts, tracing off
+# Same lab home, same Herdr lab session fm-lab-relaunchpr-23278-2780, real Claude Code worker labrl-base
+
+$ <base>/bin/fm-spawn.sh labrl-base ... --backend herdr
+spawned labrl-base harness=claude kind=ship mode=direct-PR yolo=off window=fm-lab-relaunchpr-23278-2780:w3:p2 worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/3/notes
+
+$ <base>/bin/fm-pr-check.sh labrl-base https://github.com/example/notes/pull/47
+armed: state/labrl-base.check.sh
+
+== state/labrl-base.meta BEFORE relaunch (tail) ==
+    19	herdr_pane_id=w3:p2
+    20	pr=https://github.com/example/notes/pull/47
+    21	pr_head=54bfe618dd79102a494b5ea19caaf46817cfa51c
+
+$ <base>/bin/fm-control.sh labrl-base relaunch --note '...'
+relaunched labrl-base harness=claude from=claude model=sonnet effort=low backend=herdr endpoint=fm-lab-relaunchpr-23278-2780:w3:p2 worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/3/notes
+
+== state/labrl-base.meta AFTER base relaunch (tail) - control_relaunch_tx lands AFTER pr=/pr_head= ==
+    19	herdr_pane_id=w3:p2
+    20	pr=https://github.com/example/notes/pull/47
+    21	pr_head=54bfe618dd79102a494b5ea19caaf46817cfa51c
+    22	control_relaunch_tx=58650.20261002T065212Z.26278
+
+== fm_pr_poll_artifacts_valid ==
+poll artifacts: INVALID
+
+== base watcher cycles, gh stand-in reporting MERGED ==
+arm 1: check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/contributions.check.sh: contributions: observation unavailable for https://github.com/example/notes/pull/47
+arm 2: check: rejected unauthenticated state checks: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/labrl-base.check.sh
+arm 3: check: rejected unauthenticated state checks: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/labrl-base.check.sh
+gh calls in each base arm: api repos/example/notes/pulls/46; api repos/example/notes/pulls/47; api repos/example/notes/pulls/45 (contributions observer only)
+(no 'gh pr view .../pull/47 --json state' call is ever made: the merge poll is refused before it runs, so the merge goes unnoticed)
+
+# Scenario 4: relaunching that already-broken task with the FIXED scripts repairs its record and merge monitoring
+
+$ bin/fm-control.sh labrl-base relaunch --note '...'   (fixed worktree scripts)
+relaunched labrl-base harness=claude from=claude model=sonnet effort=low backend=herdr endpoint=fm-lab-relaunchpr-23278-2780:w3:p2 worktree=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab-aux.aQDbFv/treehouse/.treehouse/notes-705adf/3/notes
+
+== state/labrl-base.meta AFTER fixed relaunch (tail) ==
+    19	herdr_pane_id=w3:p2
+    20	control_relaunch_tx=91105.20261002T065311Z.5190
+    21	pr=https://github.com/example/notes/pull/47
+    22	pr_head=54bfe618dd79102a494b5ea19caaf46817cfa51c
+
+== fm_pr_poll_artifacts_valid ==
+poll artifacts: VALID
+
+== fixed watcher cycle ==
+check: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.VvgbYh/state/labrl-base.check.sh: merged
+  gh calls: api repos/example/notes/pulls/46;api repos/example/notes/pulls/47;api repos/example/notes/pulls/45;pr view https://github.com/example/notes/pull/47 --json state -q .state;
+== bin/fm-wake-drain.sh ==
+1790924002	8	check	merged-labrl-base-https://github.com/example/notes/pull/47	check: merge landed: labrl-base https://github.com/example/notes/pull/47 external

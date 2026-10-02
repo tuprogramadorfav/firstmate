@@ -1,0 +1,22 @@
+# Regression test discrimination: tests/fm-control-relaunch.test.sh::test_relaunch_keeps_an_armed_merge_poll_valid
+# Run as a single-test copy of the new test file against three script trees (copies in a disposable dir).
+
+## Base commit 241d4617 (before the fix): FAILS - control_relaunch_tx lands after pr=/pr_head=
+not ok - a relaunch must leave the armed merge poll valid (trace off); record:
+spawn_gen=s1790924073.28910.236
+pr=https://github.com/example/repo/pull/45
+pr_head=137997b8d2c00bcefe2725b258a8483aa482c9f3
+control_relaunch_tx=27682.20261002T065431Z.13010
+
+## Base + only the first hunk (relaunch marker ordering): trace off passes, trace on FAILS - traceparent appended after pr_head=
+not ok - a relaunch must leave the armed merge poll valid (trace on); record:
+control_relaunch_tx=48611.20261002T065500Z.23703
+pr=https://github.com/example/repo/pull/45
+pr_head=1fb832ffc257fc62ba2edba0cab7173a0d7434da
+traceparent=00-8c4df3c8608a11d75a69768fa7776298-39135e0868a45546-01
+
+## Fixed tree (this change), full targeted file: bash tests/fm-control-relaunch.test.sh
+74 ok, 0 not ok, exit=0
+ok - fm-control relaunch: an armed merge poll stays valid across a relaunch, with tracing off and on
+ok - fm-spawn --relaunch: resumes the bound Pi session only for a Pi registration
+(the Herdr Pi relaunch test ran hermetically on a host without pi on PATH, using the fake pi the second commit adds)
