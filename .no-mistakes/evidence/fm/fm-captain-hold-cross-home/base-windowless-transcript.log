@@ -1,0 +1,135 @@
+
+### Build the disposable main lab home and seed the tebas-pm secondmate home
+$ in_main env FM_SECONDMATE_CHARTER=Tebas product-management decisions. /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-home-seed.sh tebas-pm /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/tebas-pm-home --no-projects
+scaffolded: /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data/tebas-pm/brief.md (secondmate charter)
+home=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.AttPqV/tebas-pm-home
+[exit 0]
+--- main data/secondmates.md
+- tebas-pm - Tebas product-management decisions. (home: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.AttPqV/tebas-pm-home; scope: Tebas product-management decisions.; projects: ; added 2026-10-02)
+--- mate .fm-secondmate-home: tebas-pm
+
+### Scout finishes; its captain call is held in the main home and attested by complete
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh hold tebas-llm-provider --title Choose the Tebas LLM provider --reason captain must pick the LLM provider --repo tebas --origin tebas-tech-proposal --until 2026-12-31
+tebas-llm-provider
+[exit 0]
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh complete tebas-tech-proposal tebas-llm-provider
+complete: tebas-tech-proposal captain-call inventory reviewed (tebas-llm-provider)
+[exit 0]
+--- scout meta attestation:
+decisions_reviewed=1
+decision_keys=tebas-llm-provider
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+verified: tebas-tech-proposal captain-call inventory
+[exit 0]
+
+### Captain says: close the board - hand the call to tebas-pm through the real handoff
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-backlog-handoff.sh tebas-pm tebas-llm-provider
+handed off 1 item(s) to tebas-pm: tebas-llm-provider
+  into /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.AttPqV/tebas-pm-home/data/backlog.md
+error: handed off work to secondmate tebas-pm, but no live receiver endpoint is recorded; the destination backlog is durable and the receiver was not woken
+[exit 1]
+--- main backlog still names tebas-llm-provider? 0 line(s)
+--- mate backlog row:
+4:- [ ] tebas-llm-provider - Choose the Tebas LLM provider (repo: tebas) (kind: captain) (since 2026-10-02) (hold: fm-hold-v1:Y2FwdGFpbiBtdXN0IHBpY2sgdGhlIExMTSBwcm92aWRlcg==) (hold-kind: captain) (hold-until: 2026-12-31)
+$ in_mate /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh open tebas-llm-provider
+[exit 0]
+
+### Main-home gate after the handoff (the reported refusal)
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### ADVERSARIAL: registered home with its .fm-secondmate-home marker removed
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-teardown.sh tebas-tech-proposal
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+REFUSED: scout task tebas-tech-proposal has not passed the captain-call completion gate.
+Inventory its report and any visual review through bin/fm-captain-hold.sh before teardown.
+[exit 1]
+--- scout meta still present after refused teardown? yes
+
+### ADVERSARIAL: marker names another secondmate id
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### ADVERSARIAL: marker is a symlink to a file naming the right id
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### ADVERSARIAL: registered path replaced by a different home that holds the same id
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### ADVERSARIAL: the home is not registered (row removed from data/secondmates.md)
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### ADVERSARIAL: the registry row is a remote route (host: set)
+- tebas-pm - Tebas product-management decisions. (host: somewhere; root: /opt/fm; home: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.AttPqV/tebas-pm-home; scope: Tebas product-management decisions.; projects: ; added 2026-10-02)
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### ADVERSARIAL: the attested inventory names a call held nowhere
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### complete in the main home names the secondmate carrying the call
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh complete tebas-tech-proposal tebas-llm-provider
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### Restored genuine registered home: verify and the operator's teardown
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-teardown.sh tebas-tech-proposal
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+REFUSED: scout task tebas-tech-proposal has not passed the captain-call completion gate.
+Inventory its report and any visual review through bin/fm-captain-hold.sh before teardown.
+[exit 1]
+--- scout meta after teardown: present
+--- scout report dir after teardown: present
+--- main backlog row for the scout:
+/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data/backlog.md:2:- [ ] tebas-tech-proposal - Investigate the Tebas tech proposal (repo: tebas) (kind: scout) (since 2026-10-02)
+--- main backlog names tebas-llm-provider? 0 line(s)
+$ in_mate /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh open tebas-llm-provider
+[exit 0]
+
+### Answered in the secondmate home: a fresh scout attesting it still passes verify
+$ in_mate /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh answer tebas-llm-provider --decision-file /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/decision.txt
+answered: tebas-llm-provider
+[exit 0]
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-llm-provider and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-llm-provider also resolves to nothing
+[exit 1]
+
+### ADVERSARIAL: a secondmate task closed with a bare tasks-axi done (no recorded answer)
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-captain-hold.sh verify tebas-tech-proposal
+fm-captain-hold: no captain-held task tebas-plain-work and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-plain-work also resolves to nothing
+[exit 1]
+$ in_main /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-test-tools.Z0iG27/base/bin/fm-teardown.sh tebas-tech-proposal
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+fm-captain-hold: no captain-held task tebas-plain-work and no migrated hold for it in this home's configured backlog (data directory /var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T//fm-lab.AttPqV/main/data); the nearest legacy identity tebas-tech-proposal-decision-tebas-plain-work also resolves to nothing
+REFUSED: scout task tebas-tech-proposal has not passed the captain-call completion gate.
+Inventory its report and any visual review through bin/fm-captain-hold.sh before teardown.
+[exit 1]
+--- scout meta still present after refused teardown? yes
