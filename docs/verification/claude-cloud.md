@@ -59,7 +59,8 @@ With the bridge reporting its pane (`pane report-agent --source firstmate:cloud-
 | `fm-control exit` | The bridge sent the exit request and ended; `agent get` answered `agent_not_found` and the pane read `dead`. |
 | `fm-control relaunch --harness claude --note …` | The bridge was stopped, and the superseded session was sent an exit request. A stand-in local claude started in the same pane and read `alive`, and the record named `harness=claude`. |
 
-[`tests/fm-cloud-bridge-herdr-e2e.test.sh`](../../tests/fm-cloud-bridge-herdr-e2e.test.sh) is that regression; rerun it after every Herdr upgrade.
+That run's fake CLI did not model Claude Code's Herdr integration, which reports a local CLI session for the pane `HERDR_PANE_ID` names and so takes the pane's agent status authority from the bridge; `fm_cloud_create` and `fm_cloud_send` in `bin/fm-cloud-lib.sh` therefore run the CLI without the Herdr pane identity.
+[`tests/fm-cloud-bridge-herdr-e2e.test.sh`](../../tests/fm-cloud-bridge-herdr-e2e.test.sh) is that regression, with a fake CLI that claims the pane as the integration does and a session created with the task pane's identity exported; rerun it after every Herdr upgrade.
 
-Not exercised live: the control plane's verbs on a real tmux pane, the `config/cloud-environment` selectors, the private-origin refusal (the end-to-end run above used a public fork and predates it), and a message reaching a session whose VM had been reclaimed.
+Not exercised live: a relaunch on Herdr with the real Claude Code CLI's Herdr integration installed, the control plane's verbs on a real tmux pane, the `config/cloud-environment` selectors, the private-origin refusal (the end-to-end run above used a public fork and predates it), and a message reaching a session whose VM had been reclaimed.
 The portable regressions are [`tests/fm-cloud-bridge.test.sh`](../../tests/fm-cloud-bridge.test.sh) and [`tests/fm-cloud-spawn.test.sh`](../../tests/fm-cloud-spawn.test.sh).
