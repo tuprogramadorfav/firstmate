@@ -1,0 +1,13 @@
+1..11
+ok - cloud status lines relay verbatim once and drive the busy record
+ok - steering records reach the session once and are handled only on acknowledgement
+ok - a ship's done line is relayed after the local copy reaches the pushed head
+ok - a done line without a pushed branch is relayed as blocked
+ok - a scout's published report is copied into data/<id>/report.md
+ok - Escape and Ctrl-C send the session interrupt and exit requests
+ok - a session that never reports is surfaced once as blocked
+ok - a relaunched session that never reports is surfaced as blocked, whatever its predecessor writes
+ok - a rejected status push is rebuilt on the moved branch head
+ok - the bridge is a recognized agent with an empty composer row
+ok - the creation transcript parser extracts only a created session
+FM_TEST_COMPLETE

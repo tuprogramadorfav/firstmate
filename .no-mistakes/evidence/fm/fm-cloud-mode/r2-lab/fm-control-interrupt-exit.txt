@@ -1,0 +1,39 @@
+$ bin/fm-control.sh cship interrupt
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+interrupt-delivered cship harness=claude-cloud backend=herdr verified=agent-alive cancel=unconfirmed
+exit=0
+$ service log
+21:09:04 message to session_r2lab1: FIRSTMATE CONTROL interrupt: stop the current step at the next safe point, commit and push work in progress, report paus
+$ tail -1 state/cship.status
+paused [at=1793153345]: interrupted on firstmate request; nothing in progress
+$ herdr agent get w1:p2 / agent state
+{"agent":"claude-cloud","status":"idle"}
+alive
+
+$ bin/fm-control.sh cship exit
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+stopped cship harness=claude-cloud backend=herdr endpoint=fm-lab-cloudr2-19776-32294:w1:p2 worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab
+exit=0
+$ service log
+21:09:12 message to session_r2lab1: FIRSTMATE CONTROL exit: commit and push work in progress, report paused: exiting on firstmate request, and end your turn
+$ herdr agent get w1:p2
+{"error":{"code":"agent_not_found","message":"agent target w1:p2 not found"},"id":"cli:agent:get"}
+$ fm_backend_agent_state herdr
+dead
+$ bridge processes for this home
+none
+$ cloud-sync
+session=session_r2lab1
+started=1793153246
+silence_reported=
+sent= inbox/001.msg
+relayed=5
+status_head=6f774373f018069f29d3ff8a3a25074174052be5
+ended_session=session_r2lab1
+$ pane
+Escape sends an interrupt request; Ctrl-C sends an exit request and stops this bridge.
+
+❯
+exit request sent to cloud session https://claude.ai/code/session_r2lab1
+on  fm/cship cproj-lab 1m45s
+❯

@@ -1,0 +1,36 @@
+$ herdr agent get w1:p2 (lab session)
+{"agent":"claude-cloud","status":"idle","source":null}
+$ fm_backend_agent_state herdr fm-lab-cloudr2-19776-32294:w1:p2
+alive
+$ cat state/cship.status
+cat: <lab>/state/cship.status: No such file or directory
+$ local copy
+HEAD
+403b20db4f3227bcea7246437de0cce17029051d
+fatal: HEAD does not point to a branch
+fatal: ambiguous argument 'refs/heads/fm/cship': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+refs/heads/fm/cship
+$ bin/fm-crew-state.sh cship
+state: working · source: pane · harness busy (fm-spawn)
+$ cat state/cship.busy-state
+v1 gen=g1793153243.24399.31756 seq=1 state=busy source=fm-spawn event=launch-brief ts=1793153243
+$ bin/fm-peek.sh cship
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+fm-cloud-bridge  task cship (ship)
+cloud session    https://claude.ai/code/session_r2lab1
+return branch    origin fm-cloud/firstmate-2ae0d122/cship
+last activity    none yet
+last status
+steering         0 record(s) awaiting acknowledgement
+
+Escape sends an interrupt request; Ctrl-C sends an exit request and stops this bridge.
+
+❯

@@ -1,0 +1,29 @@
+$ claude auth status (real login, read-only, via the stand-in service)
+{"loggedIn":true,"authMethod":"claude.ai","subscriptionType":"max"}
+$ bin/fm-spawn.sh cship <lab>/projects/cproj-lab --mode no-mistakes --yolo off --harness claude-cloud --backend herdr
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+warning: herdr presentation parent is absent or ambiguous; using the ordinary flat layout without projection
+spawned cship harness=claude-cloud kind=ship mode=no-mistakes yolo=off window=fm-lab-cloudr2-19776-32294:w1:p2 worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab
+exit=0
+$ cat state/cship.meta
+window=fm-lab-cloudr2-19776-32294:w1:p2
+endpoint_task_id=cship
+worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab
+project=<lab>/projects/cproj-lab
+harness=claude-cloud
+kind=ship
+mode=no-mistakes
+yolo=off
+branch=fm/cship
+tasktmp=/tmp/fm-cship
+model=default
+effort=default
+busy_gen=g1793153243.24399.31756
+spawn_gen=s1793153243.23349.16197
+cloud_session=session_r2lab1
+cloud_url=https://claude.ai/code/session_r2lab1
+backend=herdr
+herdr_session=fm-lab-cloudr2-19776-32294
+herdr_workspace_id=w1
+herdr_tab_id=w1:t2
+herdr_pane_id=w1:p2

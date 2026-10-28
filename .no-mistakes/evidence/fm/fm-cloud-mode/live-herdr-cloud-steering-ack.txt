@@ -1,0 +1,13 @@
+$ ls state/cship.inbox (before ack)
+/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/state/cship.inbox:
+001.msg
+handled
+
+/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/state/cship.inbox/handled:
+cloud: fm-cloud ack inbox/001.msg pushed
+$ ls state/cship.inbox (after ack + one poll)
+/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/state/cship.inbox:
+handled
+
+/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/state/cship.inbox/handled:
+001.msg

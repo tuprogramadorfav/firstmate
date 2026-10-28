@@ -1,0 +1,28 @@
+$ bin/fm-send.sh cship "Also add a second line to CHANGES.md."
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+exit=0
+relay latency after send: 6s (bridge poll is 3s)
+$ stand-in service log (messages queued into the session)
+21:08:49 message to session_r2lab1: Firstmate steering record inbox/001.msg - act on it, then run `fm-cloud ack inbox/001.msg`:  Also add a second line to C
+$ cat state/cship.status
+working [at=1793153295]: cloud session started
+done [at=1793153299]: pushed fm/cship at 7a51b10f0d199246fdd67a0063621361311c16de: added CHANGES.md
+working [at=1793153329]: acting on steering inbox/001.msg
+done [at=1793153331]: pushed fm/cship at 480d88a0f5d101f27fdbe6b5174fb7f08549f643: follow-up inbox/001.msg
+$ inbox / handled
+<lab>/state/cship.inbox
+<lab>/state/cship.inbox/handled
+<lab>/state/cship.inbox/handled/001.msg
+cship.inbox
+cship.meta
+cship.status
+cship.turn-ended
+--
+<lab>/state/cship.inbox:
+handled
+
+<lab>/state/cship.inbox/handled:
+001.msg
+$ local copy head vs origin
+480d88a0f5d101f27fdbe6b5174fb7f08549f643
+480d88a0f5d101f27fdbe6b5174fb7f08549f643

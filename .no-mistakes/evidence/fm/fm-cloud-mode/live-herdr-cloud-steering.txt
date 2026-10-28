@@ -1,0 +1,4 @@
+$ bin/fm-send.sh cship "Also add a second line to CHANGES.md"
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+fm-send: doorbell not typed because the agent in fm-lab-cloudlive-34985-7688:w1:p2 has exited; the steer is durably recorded at /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/state/cship.inbox/001.msg for recovery (stuck-crewmate-recovery), and the watcher will not re-ring a dead pane
+exit=0

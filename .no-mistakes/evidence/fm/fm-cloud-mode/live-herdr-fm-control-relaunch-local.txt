@@ -1,0 +1,8 @@
+$ bin/fm-control.sh cship relaunch --harness claude --note "deliver the pushed branch"
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+warning: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/data/cship/launch-brief.md records no ship branch; defaulting to legacy branch fm/cship
+warning: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/data/cship/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode direct-PR - confirm its definition of done matches
+notice: cship ships mode=direct-PR while the standing posture for cproj is no-mistakes - less rigor than the captain's standing posture; proceed only on a current explicit captain instruction or an intake judgment you can state
+error: the replacement agent for cship did not come up within 90s (endpoint reads 'dead')
+error: cship was relaunched on claude but no running agent could be confirmed; its work is preserved at /Users/programanding/.treehouse/cproj-09809e/1/cproj
+exit=1

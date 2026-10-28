@@ -1,0 +1,38 @@
+$ bin/fm-control.sh cship relaunch --harness claude-cloud --note "one more cloud pass"
+error: task cship's composer visibly holds pending text; refusing to type the /exit exit command because it would concatenate onto that text. Clear or submit the pending text, then retry 'relaunch'
+error: relaunch of cship failed while stopping the old agent, which is still running; its original instructions were restored
+exit=1
+cloud_session=
+working [at=1793153664]: cloud session started
+done [at=1793153668]: pushed fm/cship at fea11e873c4cb35f439bf06e5083ce491dfe5375: added CHANGES.md
+$ agent state before teardown
+alive
+$ origin return branches before
+fm-cloud/firstmate-2ae0d122/cscout
+fm-cloud/firstmate-2ae0d122/cship
+$ bin/fm-teardown.sh cship
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+teardown: reaping leaked worktree process(es) for cship: 24129 84988 97142
+teardown: force-killing leaked worktree process(es) for cship: 24129
+A new version of treehouse is available: v3.1.0 → v3.1.7
+Run "treehouse update" to update
+
+🌳 Worktree returned to pool.
+cproj-lab: already current
+teardown cship complete (window fm-lab-cloudr2-19776-32294:w1:p2, worktree <lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab)
+Backlog: cship just finished (this home keeps no markdown backlog at <lab>/data/backlog.md). Update <lab>/data/backlog.md - move cship to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+exit=0
+$ messages to 
+21:08:49 message to session_r2lab1: Firstmate steering record inbox/001.msg - act on it, then run `fm-cloud ack inbox/001.msg`:  Also add a second line to C
+21:09:04 message to session_r2lab1: FIRSTMATE CONTROL interrupt: stop the current step at the next safe point, commit and push work in progress, report paus
+21:09:12 message to session_r2lab1: FIRSTMATE CONTROL exit: commit and push work in progress, report paused: exiting on firstmate request, and end your turn
+21:11:12 message to session_r2lab2: FIRSTMATE CONTROL exit: commit and push work in progress, report paused: exiting on firstmate request, and end your turn
+21:14:55 message to session_r2lab3: FIRSTMATE CONTROL exit: commit and push work in progress, report paused: exiting on firstmate request, and end your turn
+$ origin return branches after
+fm-cloud/firstmate-2ae0d122/cscout
+$ origin task branch kept
+fea11e873c4cb35f439bf06e5083ce491dfe5375
+$ bridge processes for cship
+none
+$ state files for cship
+none

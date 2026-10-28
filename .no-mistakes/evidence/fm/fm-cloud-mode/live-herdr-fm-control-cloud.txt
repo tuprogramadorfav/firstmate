@@ -1,0 +1,6 @@
+$ bin/fm-control.sh cship exit
+already-stopped cship harness=claude-cloud backend=herdr endpoint=fm-lab-cloudlive-34985-7688:w1:p2 worktree=/Users/programanding/.treehouse/cproj-09809e/1/cproj
+exit=0
+$ bin/fm-control.sh cship interrupt
+error: no agent is running at task cship's recorded endpoint (state: dead); there is nothing to interrupt
+exit=1

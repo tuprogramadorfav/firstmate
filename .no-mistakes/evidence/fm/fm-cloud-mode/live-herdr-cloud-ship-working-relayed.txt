@@ -1,0 +1,13 @@
+$ cat state/cship.status
+working [at=1793151561]: cloud session started
+
+$ bin/fm-crew-state.sh cship
+state: working · source: pane · harness busy (cloud-bridge)
+$ cat state/cship.busy
+cship.busy-gen
+cship.busy-state
+cship.cloud-sync
+cship.git-hooks
+cship.meta
+cship.status
+home-summary.json

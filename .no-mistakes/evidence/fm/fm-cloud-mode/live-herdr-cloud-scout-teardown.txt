@@ -1,0 +1,24 @@
+$ git --git-dir=<origin> for-each-ref refs/heads/fm-cloud (before)
+refs/heads/fm-cloud/firstmate-2ae0d122/cscout
+refs/heads/fm-cloud/firstmate-2ae0d122/cship
+$ bin/fm-captain-hold.sh complete cscout --none
+complete: cscout captain-call inventory reviewed
+$ bin/fm-teardown.sh cscout
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+teardown: reaping leaked worktree process(es) for cscout: 72987 74185
+teardown: force-killing leaked worktree process(es) for cscout: 72987
+A new version of treehouse is available: v3.1.0 → v3.1.7
+Run "treehouse update" to update
+
+🌳 Worktree returned to pool.
+teardown cscout complete (window fm-lab-cloudlive-34985-7688:w2:p2, worktree /Users/programanding/.treehouse/cproj-09809e/2/cproj)
+Backlog: cscout just finished (this home keeps no markdown backlog at /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/data/backlog.md). Update /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/data/backlog.md - move cscout to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+exit=0
+$ git --git-dir=<origin> for-each-ref refs/heads/fm-cloud (after)
+refs/heads/fm-cloud/firstmate-2ae0d122/cship
+$ messages sent to session_lab2
+>>> 20:46:09 session_lab2
+FIRSTMATE CONTROL exit: firstmate has finished with this task and closed its channel. Do no further work, report nothing, and end your turn.
+<<<
+$ ls state | grep cscout
+(none)

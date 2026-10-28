@@ -1,0 +1,18 @@
+### Fixture fix: the local-claude stand-in is now a symlink to /bin/sleep (a copied platform binary is SIGKILLed on macOS).
+### Back to the cloud runtime so the local handoff starts from a running bridge again
+$ bin/fm-control.sh cship relaunch --harness claude-cloud --note "resume in the cloud"
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+relaunched cship harness=claude-cloud from=claude model=default effort=default backend=herdr endpoint=fm-lab-cloudr2-19776-32294:w1:p2 worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab
+exit=0
+harness=claude-cloud
+cloud_session=session_r2lab3
+$ service log
+21:11:12 message to session_r2lab2: FIRSTMATE CONTROL exit: commit and push work in progress, report paused: exiting on firstmate request, and end your turn
+21:14:22 created session_r2lab3 in <lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab branch=fm/cship
+$ tail -2 state/cship.status
+working [at=1793153664]: cloud session started
+done [at=1793153668]: pushed fm/cship at fea11e873c4cb35f439bf06e5083ce491dfe5375: added CHANGES.md
+$ herdr agent get / agent state
+{"agent":"claude-cloud","status":"idle"}
+alive

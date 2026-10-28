@@ -1,0 +1,10 @@
+$ herdr agent get w1:p2 --session fm-lab-cloudlive-34985-7688
+{"error":{"code":"agent_not_found","message":"agent target w1:p2 not found"},"id":"cli:agent:get"}
+$ fm_backend_agent_state herdr <cship window>
+dead
+$ ps (bridge process in the pane)
+38023 fm-cloud-bridge /Users/programanding/.no-mistakes/work
+
+$ bin/fm-control.sh cship interrupt
+error: no agent is running at task cship's recorded endpoint (state: dead); there is nothing to interrupt
+exit=0

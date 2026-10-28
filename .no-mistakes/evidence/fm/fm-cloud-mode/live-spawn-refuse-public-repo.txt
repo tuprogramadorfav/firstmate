@@ -1,0 +1,13 @@
+### Live: real fm-spawn, real claude login, real gh; origin=https://github.com/tuprogramadorfav/firstmate (public)
+$ claude auth status | jq "{loggedIn,authMethod,subscriptionType}"
+{"loggedIn":true,"authMethod":"claude.ai","subscriptionType":"max"}
+$ gh api repos/tuprogramadorfav/firstmate --jq "{private,push:.permissions.push}"
+{"private":false,"push":true}
+
+$ bin/fm-spawn.sh pub1 <lab>/projects/scratch --mode direct-PR --yolo off --harness claude-cloud --backend tmux
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt
+error: claude-cloud needs github.com/tuprogramadorfav/firstmate to be a private repository, because the task's status lines, steering record names, and scout report travel through branches on origin; gh reports private=false
+exit=1
+$ ls <lab>/state ; git worktree list ; ls <lab>/data/pub1
+/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/projects/scratch 8af8f75 [main]
+brief.md

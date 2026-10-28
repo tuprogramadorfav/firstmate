@@ -1,0 +1,4 @@
+ok - real herdr: a running claude-cloud bridge reads as a live agent
+ok - real herdr: fm-control interrupt reaches the cloud session through the bridge
+ok - real herdr: fm-control exit stops the bridge, sends the exit request, and releases the registration
+ok - real herdr: relaunch --harness claude stops the bridge and launches the local worker in its pane

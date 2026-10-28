@@ -1,0 +1,27 @@
+$ cat state/cship.status
+working [at=1793153295]: cloud session started
+done [at=1793153299]: pushed fm/cship at 7a51b10f0d199246fdd67a0063621361311c16de: added CHANGES.md
+$ local copy: branch, head, upstream; origin fm/cship
+fm/cship
+7a51b10f0d199246fdd67a0063621361311c16de
+origin/fm/cship
+7a51b10f0d199246fdd67a0063621361311c16de
+$ bin/fm-crew-state.sh cship
+state: done · source: status-log · pushed fm/cship at 7a51b10f0d199246fdd67a0063621361311c16de: added CHANGES.md
+$ cat state/cship.busy-state
+v1 gen=g1793153243.24399.31756 seq=3 state=idle source=cloud-bridge event=cloud-done ts=1793153301
+$ herdr agent get w1:p2
+{"agent":"claude-cloud","status":"idle"}
+$ fm_backend_agent_state herdr fm-lab-cloudr2-19776-32294:w1:p2
+alive
+$ herdr pane read (bridge screen)
+fm-cloud-bridge  task cship (ship)
+cloud session    https://claude.ai/code/session_r2lab1
+return branch    origin fm-cloud/firstmate-2ae0d122/cship
+last activity    2026-10-27 21:08:19
+last status      done [at=1793153299]: pushed fm/cship at 7a51b10f0d199246fdd67a0063621361311c16de: added CHANGES.md
+steering         0 record(s) awaiting acknowledgement
+
+Escape sends an interrupt request; Ctrl-C sends an exit request and stops this bridge.
+
+❯

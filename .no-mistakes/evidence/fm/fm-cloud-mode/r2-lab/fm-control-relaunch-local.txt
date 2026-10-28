@@ -1,0 +1,32 @@
+$ before handoff: herdr agent / state
+{"agent":"claude-cloud","status":"idle"}
+alive
+$ bin/fm-control.sh cship relaunch --harness claude --note "the cloud ship is done at the pushed head; run the no-mistakes delivery locally"
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+relaunched cship harness=claude from=claude-cloud model=default effort=default backend=herdr endpoint=fm-lab-cloudr2-19776-32294:w1:p2 worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab
+exit=0
+$ service log (exit request to the superseded session)
+21:14:55 message to session_r2lab3: FIRSTMATE CONTROL exit: commit and push work in progress, report paused: exiting on firstmate request, and end your turn
+$ meta harness
+harness=claude
+$ herdr agent get / agent state
+{"agent":"claude","status":"idle"}
+alive
+$ bridge processes for this home
+none
+$ local claude process in the pane
+84988 <lab>/scratch/agentbin/claude 1800
+$ local copy head (what local delivery runs on) vs origin
+fm/cship
+fea11e873c4cb35f439bf06e5083ce491dfe5375
+fea11e873c4cb35f439bf06e5083ce491dfe5375
+$ pane after handoff
+export COMPACT_ADVISER_DISABLE=1
+export FM_TASK_ID=cship
+on  fm/cship cproj-lab
+❯ export COMPACT_ADVISER_DISABLE=1
+on  fm/cship cproj-lab
+❯ export FM_TASK_ID=cship
+on  fm/cship cproj-lab
+❯ . '/tmp/fm-cship+aba89f87283b3d10a4c60be9c9b5e0e62b211e5de0155ceba8cf2a0c0f987743/launch.s1793153698.82921.5249.sh'

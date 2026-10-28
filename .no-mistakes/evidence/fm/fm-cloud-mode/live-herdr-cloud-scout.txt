@@ -1,0 +1,18 @@
+$ bin/fm-spawn.sh cscout <lab>/projects/cproj --scout --harness claude-cloud --backend herdr
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+spawned cscout harness=claude-cloud kind=scout window=fm-lab-cloudlive-34985-7688:w2:p2 worktree=/Users/programanding/.treehouse/cproj-09809e/2/cproj
+window=fm-lab-cloudlive-34985-7688:w2:p2
+kind=scout
+spawn_gen=s1793151913.71335.10615
+cloud_session=session_lab2
+cloud_url=https://claude.ai/code/session_lab2
+$ cat state/cscout.status
+working [at=1793151917]: cloud session started
+done [at=1793151918]: report published
+$ cmp cloud report vs data/cscout/report.md
+byte-identical
+# Scout report
+
+The README contains a single heading, `# cproj`.
+$ bin/fm-crew-state.sh cscout
+state: done · source: status-log · report published

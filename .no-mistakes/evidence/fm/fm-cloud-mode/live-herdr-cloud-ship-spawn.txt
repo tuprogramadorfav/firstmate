@@ -1,0 +1,31 @@
+$ bin/fm-spawn.sh cship <lab>/projects/cproj --mode direct-PR --yolo off --harness claude-cloud --backend herdr
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt
+warning: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/data/cship/launch-brief.md records no ship branch; defaulting to legacy branch fm/cship
+warning: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/data/cship/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode direct-PR - confirm its definition of done matches
+notice: cship ships mode=direct-PR while the standing posture for cproj is no-mistakes - less rigor than the captain's standing posture; proceed only on a current explicit captain instruction or an intake judgment you can state
+warning: herdr presentation parent is absent or ambiguous; using the ordinary flat layout without projection
+spawned cship harness=claude-cloud kind=ship mode=direct-PR yolo=off window=fm-lab-cloudlive-34985-7688:w1:p2 worktree=/Users/programanding/.treehouse/cproj-09809e/1/cproj
+exit=0
+
+$ cat state/cship.meta
+window=fm-lab-cloudlive-34985-7688:w1:p2
+endpoint_task_id=cship
+worktree=/Users/programanding/.treehouse/cproj-09809e/1/cproj
+project=/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/projects/cproj
+harness=claude-cloud
+kind=ship
+mode=direct-PR
+yolo=off
+branch=fm/cship
+tasktmp=/tmp/fm-cship
+model=default
+effort=default
+busy_gen=g1793151528.37309.20411
+spawn_gen=s1793151528.35494.1663
+cloud_session=session_lab1
+cloud_url=https://claude.ai/code/session_lab1
+backend=herdr
+herdr_session=fm-lab-cloudlive-34985-7688
+herdr_workspace_id=w1
+herdr_tab_id=w1:t2
+herdr_pane_id=w1:p2

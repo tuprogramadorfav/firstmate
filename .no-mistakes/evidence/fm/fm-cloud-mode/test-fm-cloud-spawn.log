@@ -1,0 +1,12 @@
+1..10
+ok - a scout launch creates and records the cloud session and runs the bridge
+ok - cleanup tells the session the task is closed and deletes its return branch
+ok - cleanup after a local handoff still closes the cloud session and its return branch
+ok - a ship launch tells the cloud session its branch and leaves delivery local
+ok - config/cloud-environment selects the session's environment and malformed lines refuse
+ok - missing prerequisites refuse before any record, session, or local launch
+ok - a failed creation stops the spawn and a failed launch stops the created session
+ok - a fresh spawn removes the return branch and relay record an earlier spawn left
+ok - a relaunch starts a new session and stops the superseded one
+ok - a relaunch onto a local harness stops the superseded cloud session
+FM_TEST_COMPLETE

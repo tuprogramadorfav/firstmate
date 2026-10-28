@@ -1,0 +1,27 @@
+$ bin/fm-control.sh cship relaunch --harness claude-cloud --note "continue on the pushed branch"
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+relaunched cship harness=claude-cloud from=claude-cloud model=default effort=default backend=herdr endpoint=fm-lab-cloudr2-19776-32294:w1:p2 worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab
+exit=0
+$ meta cloud_session / spawn_gen
+window=fm-lab-cloudr2-19776-32294:w1:p2
+harness=claude-cloud
+spawn_gen=s1793153400.41356.25625
+cloud_session=session_r2lab2
+$ service log
+21:09:04 message to session_r2lab1: FIRSTMATE CONTROL interrupt: stop the current step at the next safe point, commit and push work in progress, report paus
+21:09:12 message to session_r2lab1: FIRSTMATE CONTROL exit: commit and push work in progress, report paused: exiting on firstmate request, and end your turn
+21:10:01 created session_r2lab2 in <lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab branch=fm/cship
+$ new session base branch handling (vm.log)
+$ herdr agent get / agent state
+{"agent":"claude-cloud","status":"idle"}
+alive
+$ tail -3 state/cship.status
+working [at=1793153329]: acting on steering inbox/001.msg
+done [at=1793153331]: pushed fm/cship at 480d88a0f5d101f27fdbe6b5174fb7f08549f643: follow-up inbox/001.msg
+paused [at=1793153345]: interrupted on firstmate request; nothing in progress
+$ origin fm/cship history
+480d88a cloud: follow-up inbox/001.msg
+7a51b10 cloud: add CHANGES.md (session_r2lab1)
+403b20d readme
+53f468a init

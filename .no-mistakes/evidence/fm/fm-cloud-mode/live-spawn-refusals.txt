@@ -1,0 +1,19 @@
+### Live: real fm-spawn refusals (real claude login, real gh)
+$ bin/fm-spawn.sh lo1 <lab>/projects/scratch --mode local-only --yolo off --harness claude-cloud --backend tmux
+error: claude-cloud cannot ship mode=local-only: a cloud session delivers only by pushing its branch to GitHub, and a local-only task publishes nothing. Ship it with a local harness, or choose no-mistakes or direct-PR.
+exit=1
+
+$ git remote set-url origin https://gitlab.com/example/scratch ; bin/fm-spawn.sh gl1 ... --mode direct-PR --harness claude-cloud
+error: claude-cloud needs the project's origin on github.com, the only forge a cloud session can push to; origin is 'https://gitlab.com/example/scratch'
+exit=1
+
+$ git remote set-url origin https://github.com/tuprogramadorfav/fm-nonexistent-repo-probe ; bin/fm-spawn.sh nx1 ... --scout --harness claude-cloud
+error: claude-cloud needs push access to github.com/tuprogramadorfav/fm-nonexistent-repo-probe for the local gh login, which delivers the branch the cloud session pushes; gh reports push=unreadable
+exit=1
+
+$ bin/fm-spawn.sh sm1 --harness claude-cloud --backend tmux --secondmate
+error: claude-cloud runs ship and scout tasks only; a secondmate cannot run in a cloud session. Select a harness verified for secondmates.
+exit=1
+
+$ ls -A <lab>/state ; git worktree list   (nothing created)
+/private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-lab.zPTKYt/projects/scratch 8af8f75 [main]

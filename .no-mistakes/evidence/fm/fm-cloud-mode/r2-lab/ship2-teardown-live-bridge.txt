@@ -1,0 +1,33 @@
+$ bin/fm-spawn.sh cship2 <lab>/projects/cproj-lab --mode no-mistakes --yolo off --harness claude-cloud --backend herdr
+warning: herdr presentation parent is absent or ambiguous; using the ordinary flat layout without projection
+spawned cship2 harness=claude-cloud kind=ship mode=no-mistakes yolo=off window=fm-lab-cloudr2-19776-32294:w3:p2 worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab
+exit=0
+working [at=1793153853]: cloud session started
+done [at=1793153857]: pushed fm/cship2 at c9e22a35fe2cfe722e71dc30a0ec57701c629617: added CHANGES.md
+$ agent state before teardown
+{"agent":"claude-cloud","status":"done"}
+alive
+$ bridge pid
+3008 fm-cloud-bridge /Users/programanding/.no-mistakes/worktrees/e297dd311d7c/01M600D8JESCG63E76750T8455/bin/fm-cloud-bridge.sh <lab>/state <lab>/data <lab>/config cship2
+$ bin/fm-teardown.sh cship2
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+teardown: reaping leaked worktree process(es) for cship2: 1711 3008 5025
+teardown: force-killing leaked worktree process(es) for cship2: 1711
+A new version of treehouse is available: v3.1.0 → v3.1.7
+Run "treehouse update" to update
+
+🌳 Worktree returned to pool.
+cproj-lab: already current
+teardown cship2 complete (window fm-lab-cloudr2-19776-32294:w3:p2, worktree <lab>/treehouse/.treehouse/cproj-lab-1c4d75/1/cproj-lab)
+Backlog: cship2 just finished (this home keeps no markdown backlog at <lab>/data/backlog.md). Update <lab>/data/backlog.md - move cship2 to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+exit=0
+$ messages to session_r2lab5
+21:17:56 message to session_r2lab5: FIRSTMATE CONTROL exit: firstmate has finished with this task and closed its channel. Do no further work, report nothing
+$ origin return branches after
+fm-cloud/firstmate-2ae0d122/cscout
+$ bridge processes for cship2
+none
+$ herdr pane w3:p2
+{"error":{"code":"agent_not_found","message":"agent target w3:p2 not found"},"id":"cli:agent:get"}
+$ state files for cship2
+none

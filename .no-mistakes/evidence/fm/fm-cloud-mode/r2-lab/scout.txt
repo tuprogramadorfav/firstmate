@@ -1,0 +1,20 @@
+$ bin/fm-spawn.sh cscout <lab>/projects/cproj-lab --scout --harness claude-cloud --backend herdr
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+spawned cscout harness=claude-cloud kind=scout window=fm-lab-cloudr2-19776-32294:w2:p2 worktree=<lab>/treehouse/.treehouse/cproj-lab-1c4d75/2/cproj-lab
+exit=0
+window=fm-lab-cloudr2-19776-32294:w2:p2
+kind=scout
+cloud_session=session_r2lab4
+$ cat state/cscout.status
+working [at=1793153721]: cloud session started
+done [at=1793153725]: report published
+$ cmp cloud-published report vs data/cscout/report.md
+byte-identical
+# Scout report
+
+The README contains a single heading, `# cproj-lab`.
+$ bin/fm-crew-state.sh cscout
+state: done · source: status-log · report published
+$ herdr agent get / agent state
+{"agent":"claude-cloud","status":"done"}
+alive

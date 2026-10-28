@@ -1,0 +1,12 @@
+fm-cloud-bridge  task cship (ship)
+cloud session    https://claude.ai/code/session_lab1
+return branch    origin fm-cloud/firstmate-2ae0d122/cship
+last activity    2026-10-27 20:40:06
+last status      done [at=1793151606]: pushed fm/cship at f7149f02de2fb9864bc6ccdab1026a69e6b77a9a: added CHANGES.md
+steering         1 record(s) awaiting acknowledgement
+note             sent inbox/001.msg to the cloud session
+
+Escape sends an interrupt request; Ctrl-C sends an exit request and stops this bridge.
+
+❯ export COMPACT_ADVISER_DISABLE=1
+export FM_TASK_ID=cship

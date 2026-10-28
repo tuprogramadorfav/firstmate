@@ -1,0 +1,26 @@
+$ origin return branches before
+fm-cloud/firstmate-2ae0d122/cscout
+fm-cloud/firstmate-2ae0d122/cship
+$ bin/fm-teardown.sh cscout
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+fm-captain-hold: compatible tasks-axi is required
+REFUSED: scout task cscout has not passed the captain-call completion gate.
+Inventory its report and any visual review through bin/fm-captain-hold.sh before teardown.
+exit=1
+$ service log (messages to the scout session)
+$ origin return branches after
+fm-cloud/firstmate-2ae0d122/cscout
+fm-cloud/firstmate-2ae0d122/cship
+$ bridge processes for cscout
+88475 fm-cloud-bridge /Users/programanding/.no-mistakes/worktrees/e297dd311d7c/01M600D8JESCG63E76750T8455/bin/fm-cloud-bridge.sh <lab>/state <lab>/data <lab>/config cscout
+$ state files for cscout
+cscout.busy-gen
+cscout.busy-state
+cscout.cloud-sync
+cscout.git-hooks
+cscout.herdr-presentation
+cscout.meta
+cscout.status
+cscout.turn-ended
+$ herdr pane w2:p2
+{"agent":"claude-cloud","error":null}

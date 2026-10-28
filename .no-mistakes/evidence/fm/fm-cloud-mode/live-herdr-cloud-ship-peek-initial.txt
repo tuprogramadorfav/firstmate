@@ -1,0 +1,21 @@
+$ bin/fm-peek.sh cship
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+fm-cloud-bridge  task cship (ship)
+cloud session    https://claude.ai/code/session_lab1
+return branch    origin fm-cloud/firstmate-2ae0d122/cship
+last activity    none yet
+last status
+steering         0 record(s) awaiting acknowledgement
+
+Escape sends an interrupt request; Ctrl-C sends an exit request and stops this bridge.
+
+❯
+
+$ bin/fm-crew-state.sh cship
+state: working · source: pane · harness busy (fm-spawn)

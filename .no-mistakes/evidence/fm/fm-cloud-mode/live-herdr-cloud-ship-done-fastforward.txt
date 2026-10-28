@@ -1,0 +1,25 @@
+$ cat state/cship.status
+working [at=1793151561]: cloud session started
+done [at=1793151606]: pushed fm/cship at f7149f02de2fb9864bc6ccdab1026a69e6b77a9a: added CHANGES.md
+
+cloud pushed fm/cship at f7149f02de2fb9864bc6ccdab1026a69e6b77a9a
+$ git -C <worktree> rev-parse --abbrev-ref HEAD; git rev-parse HEAD; git rev-parse --abbrev-ref @{u}
+fm/cship
+f7149f02de2fb9864bc6ccdab1026a69e6b77a9a
+origin/fm/cship
+$ bin/fm-crew-state.sh cship
+state: done · source: status-log · pushed fm/cship at f7149f02de2fb9864bc6ccdab1026a69e6b77a9a: added CHANGES.md
+$ cat state/cship.busy-state
+v1 gen=g1793151528.37309.20411 seq=3 state=idle source=cloud-bridge event=cloud-done ts=1793151623
+$ bin/fm-peek.sh cship (bridge pane)
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+fm-cloud-bridge  task cship (ship)
+cloud session    https://claude.ai/code/session_lab1
+return branch    origin fm-cloud/firstmate-2ae0d122/cship
+last activity    2026-10-27 20:40:06
+last status      done [at=1793151606]: pushed fm/cship at f7149f02de2fb9864bc6ccdab1026a69e6b77a9a: added CHANGES.md
+steering         0 record(s) awaiting acknowledgement
+
+Escape sends an interrupt request; Ctrl-C sends an exit request and stops this bridge.
+
+❯

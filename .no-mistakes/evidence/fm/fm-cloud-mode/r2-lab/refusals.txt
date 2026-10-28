@@ -1,0 +1,16 @@
+### Refusal: origin reported public (gh private=false)
+$ bin/fm-spawn.sh cpub $LAB/projects/cproj-lab --mode no-mistakes --yolo off --harness claude-cloud --backend herdr
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+error: claude-cloud needs github.com/tuprogramadorfav/cproj-lab to be a private repository, because the task's status lines, steering record names, and scout report travel through branches on origin; gh reports private=false
+exit=1
+### Refusal: visibility unreadable
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+error: claude-cloud needs github.com/tuprogramadorfav/cproj-lab to be a private repository, because the task's status lines, steering record names, and scout report travel through branches on origin; gh reports private=unreadable
+exit=1
+### Refusal: local-only ship
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+error: claude-cloud cannot ship mode=local-only: a cloud session delivers only by pushing its branch to GitHub, and a local-only task publishes nothing. Ship it with a local harness, or choose no-mistakes or direct-PR.
+exit=1
+### After refusals: task records, sessions created, worktrees
+sessions created: 0
+       0
