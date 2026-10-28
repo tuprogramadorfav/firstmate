@@ -27,6 +27,10 @@
 #   8. The creation transcript parser extracts the session id and URL.
 #   9. A status push rejected because another session moved the return branch
 #      is rebuilt on the new head, so no line from either session is lost.
+#  10. The local CLI runs without the Herdr pane identity, both to create a
+#      session and to message one, so Claude Code's Herdr integration cannot
+#      claim the task pane and hide the bridge's own registration
+#      (tests/fm-cloud-bridge-herdr-e2e.test.sh drives that against Herdr).
 set -u
 
 # shellcheck source=tests/lib.sh
@@ -344,6 +348,40 @@ test_parse_create_transcript() {
   pass "the creation transcript parser extracts only a created session"
 }
 
+test_cli_runs_without_herdr_pane_identity() {
+  local dir="$TMP/herdr-identity" out
+  mkdir -p "$dir"
+  # A fake CLI that records the Herdr identity it was started with.
+  cat > "$dir/claude" <<SH
+#!/usr/bin/env bash
+printf 'env=%s pane=%s socket=%s\n' "\${HERDR_ENV:-}" "\${HERDR_PANE_ID:-}" "\${HERDR_SOCKET_PATH:-}" >> '$dir/seen'
+cat >/dev/null
+if [ "\${1:-}" = --cloud ]; then
+  printf 'View: https://claude.ai/code/session_identity\n'
+else
+  printf '{"ok":true}\n'
+fi
+SH
+  chmod +x "$dir/claude"
+  printf 'prompt\n' > "$dir/prompt.md"
+  # shellcheck disable=SC2016 # the single-quoted script expands in the inner shell
+  out=$(env HERDR_ENV=1 HERDR_PANE_ID=w9:p9 HERDR_SOCKET_PATH="$dir/herdr.sock" \
+    FM_HOME="$dir" FM_ROOT="$ROOT" FM_CLOUD_CLAUDE="$dir/claude" bash -c '
+      . "$1/bin/fm-cloud-lib.sh"
+      fm_cloud_create "$2" "$2/prompt.md" "$2/create.log" || exit 1
+      printf "\n"
+      fm_cloud_send session_identity hello || exit 1
+      printf "pane-after=%s\n" "${HERDR_PANE_ID:-}"' _ "$ROOT" "$dir") \
+    || fail "creating and messaging a session with a Herdr identity exported failed: $out"
+  assert_equals $'env= pane= socket=\nenv= pane= socket=' "$(cat "$dir/seen")" \
+    "neither the creation nor the message run sees the Herdr pane identity"
+  case "$out" in
+    *pane-after=w9:p9*) : ;;
+    *) fail "the caller must keep its own Herdr identity, got: $out" ;;
+  esac
+  pass "the local CLI runs without the Herdr pane identity, and the caller keeps its own"
+}
+
 trap 'stop_bridge; fm_test_cleanup' EXIT
 fm_test_run \
   test_status_relay_and_busy \
@@ -356,4 +394,5 @@ fm_test_run \
   test_relaunched_silent_session_reported \
   test_rejected_push_rebuilt_on_new_head \
   test_bridge_is_agent_with_empty_composer \
-  test_parse_create_transcript
+  test_parse_create_transcript \
+  test_cli_runs_without_herdr_pane_identity
