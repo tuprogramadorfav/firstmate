@@ -49,71 +49,83 @@ status_head() {
   fi
 }
 
-# Read one file from the status branch, empty when absent.
-status_file() {  # <path>
-  local head
-  head=$(status_head)
-  [ -n "$head" ] || return 0
-  git show "$head:$1" 2>/dev/null || true
-}
-
-# Commit <path> with <content-file> onto the status branch and push it. One
-# writer means a rejected push is transient, so it is retried rather than merged.
-status_commit() {  # <path> <content-file> <message>
-  local path=$1 file=$2 msg=$3 parent blob tree commit idx try
-  parent=$(status_head)
-  idx=$(mktemp)
-  rm -f "$idx"
-  if [ -n "$parent" ]; then
-    GIT_INDEX_FILE=$idx git read-tree "$parent"
-  else
-    GIT_INDEX_FILE=$idx git read-tree --empty
-  fi
-  blob=$(git hash-object -w -- "$file")
-  GIT_INDEX_FILE=$idx git update-index --add --cacheinfo "100644,$blob,$path"
-  tree=$(GIT_INDEX_FILE=$idx git write-tree)
-  rm -f "$idx"
-  if [ -n "$parent" ]; then
-    commit=$(git -c user.name=fm-cloud -c user.email=fm-cloud@localhost commit-tree "$tree" -p "$parent" -m "$msg")
-  else
-    commit=$(git -c user.name=fm-cloud -c user.email=fm-cloud@localhost commit-tree "$tree" -m "$msg")
-  fi
+# Apply <filter> to <path> on the status branch and push the result. The
+# filter reads the file's current content (empty when absent) on stdin and
+# prints its new content. A rejected push means another writer moved the
+# branch (a superseded session's last status line can land after its
+# replacement started), so each retry refetches the remote head and reapplies
+# the filter on it; every change only appends or replaces, so that is safe.
+status_update() {  # <path> <message> <filter> [arg...]
+  local path=$1 msg=$2 parent blob tree commit idx tmp try
+  shift 2
   for try in 1 2 3 4 5; do
+    parent=$(status_head)
+    tmp=$(mktemp)
+    { [ -z "$parent" ] || git show "$parent:$path" 2>/dev/null || true; } | "$@" > "$tmp"
+    idx=$(mktemp)
+    rm -f "$idx"
+    if [ -n "$parent" ]; then
+      GIT_INDEX_FILE=$idx git read-tree "$parent"
+    else
+      GIT_INDEX_FILE=$idx git read-tree --empty
+    fi
+    blob=$(git hash-object -w -- "$tmp")
+    rm -f "$tmp"
+    GIT_INDEX_FILE=$idx git update-index --add --cacheinfo "100644,$blob,$path"
+    tree=$(GIT_INDEX_FILE=$idx git write-tree)
+    rm -f "$idx"
+    if [ -n "$parent" ]; then
+      commit=$(git -c user.name=fm-cloud -c user.email=fm-cloud@localhost commit-tree "$tree" -p "$parent" -m "$msg")
+    else
+      commit=$(git -c user.name=fm-cloud -c user.email=fm-cloud@localhost commit-tree "$tree" -m "$msg")
+    fi
     if git push -q "$REMOTE" "$commit:refs/heads/$STATUS_BRANCH" 2>/dev/null; then
       git update-ref "$STATUS_REF" "$commit"
       return 0
     fi
     sleep "$try"
+    git fetch -q "$REMOTE" "+refs/heads/$STATUS_BRANCH:$STATUS_REF" 2>/dev/null || true
   done
   die "could not push $path to $REMOTE $STATUS_BRANCH"
 }
 
+append_line() {  # <line>
+  cat
+  printf '%s\n' "$1"
+}
+
+add_acks() {  # <name>...
+  local acks name nl=$'\n'
+  acks=$(cat)
+  for name in "$@"; do
+    case "$nl$acks$nl" in
+      *"$nl$name$nl"*) ;;
+      *) acks=${acks:+$acks$nl}$name ;;
+    esac
+  done
+  printf '%s\n' "$acks"
+}
+
+replace_with() {  # <file>
+  cat > /dev/null
+  cat -- "$1"
+}
+
 cmd_status() {
-  local line=$* tmp
+  local line=$*
   [ -n "$line" ] || die "status needs a line"
   case "$line" in *$'\n'*) die "status takes exactly one line" ;; esac
-  tmp=$(mktemp)
-  status_file status.log > "$tmp"
-  printf '%s\n' "$line" >> "$tmp"
-  status_commit status.log "$tmp" "status: ${line%%:*}"
-  rm -f "$tmp"
+  status_update status.log "status: ${line%%:*}" append_line "$line"
 }
 
 cmd_ack() {
-  local tmp name
   [ "$#" -gt 0 ] || die "ack needs at least one record name"
-  tmp=$(mktemp)
-  status_file acks > "$tmp"
-  for name in "$@"; do
-    grep -qxF -- "$name" "$tmp" || printf '%s\n' "$name" >> "$tmp"
-  done
-  status_commit acks "$tmp" "ack: $*"
-  rm -f "$tmp"
+  status_update acks "ack: $*" add_acks "$@"
 }
 
 cmd_report() {
   [ -f "${1:-}" ] || die "report needs a readable file"
-  status_commit report.md "$1" "report"
+  status_update report.md "report" replace_with "$1"
 }
 
 case "${1:-}" in

@@ -1618,10 +1618,17 @@ spawn_abort_cleanup() {
   local status=$?
   # A cloud session created by this spawn keeps running in the cloud even
   # after its local endpoint closes, so a failed launch sends it an exit
-  # request (bin/fm-cloud-lib.sh) before anything else is unwound.
+  # request (bin/fm-cloud-lib.sh) before anything else is unwound. A failed
+  # fresh spawn also deletes the session's return branch and relay record,
+  # which belong to no task once the spawn is gone.
   if [ "$status" -ne 0 ] && [ -n "$CLOUD_ABORT_SESSION" ]; then
     fm_cloud_control "$CLOUD_ABORT_SESSION" exit ||
       echo "warning: the cloud session $CLOUD_URL for $ID could not be sent an exit request after the failed spawn; stop it from claude.ai/code" >&2
+    if [ "$RELAUNCH" -eq 0 ]; then
+      fm_cloud_delete_channel "$ID" "$PROJ_ABS" ||
+        echo "warning: could not delete the cloud return branch $(fm_cloud_status_branch "$ID") of $ID's failed spawn; the next spawn of $ID removes it" >&2
+      rm -f "$STATE/$ID.cloud-sync"
+    fi
   fi
   if [ "$RELAUNCH_REPLACEMENT_PENDING" = 1 ] &&
     [ "$SPAWN_META_PUBLISH_STARTED" = 1 ] &&
@@ -3020,6 +3027,10 @@ if [ "$HARNESS" = claude-cloud ]; then
     echo "error: claude-cloud is supported on the tmux and herdr backends only; backend=$BACKEND has no recovery-grade agent-state classifier for its bridge endpoint. Select backend tmux or herdr." >&2
     exit 1
   fi
+fi
+# A relaunch away from claude-cloud still stops the superseded cloud session
+# (below), so it needs the cloud library too.
+if [ "$HARNESS" = claude-cloud ] || [ "$RELAUNCH_PRIOR_HARNESS" = claude-cloud ]; then
   # shellcheck source=bin/fm-cloud-lib.sh
   . "$FM_ROOT/bin/fm-cloud-lib.sh"
 fi
@@ -6644,21 +6655,31 @@ fi
 META_WINDOW=$T
 [ "$BACKEND" = orca ] && META_WINDOW=$W
 [ "$BACKEND" = t3code ] && META_WINDOW=$W
-# claude-cloud: create this incarnation's cloud session now that the worktree,
-# endpoint, and rendered launch brief exist, so its id and URL enter the task
-# record below like any other endpoint binding. A relaunch replaces the
+# A relaunch of a claude-cloud task, onto any harness, replaces its cloud
 # session: a previous session that was never sent an exit request (its bridge
 # died rather than being stopped) is sent one first, so it stops instead of
-# competing with its replacement on the same branch. A creation failure stops
-# the spawn; the abort path closes the endpoint and sends the new session an
-# exit request if any later step fails.
+# competing with its replacement, local or cloud, on the same branch.
+if [ "$RELAUNCH" -eq 1 ] && [ "$RELAUNCH_PRIOR_HARNESS" = claude-cloud ]; then
+  CLOUD_PRIOR_SESSION=$(fm_meta_get "$RELAUNCH_META" cloud_session)
+  if [ -n "$CLOUD_PRIOR_SESSION" ] && [ "$(fm_meta_get "$STATE/$ID.cloud-sync" ended_session)" != "$CLOUD_PRIOR_SESSION" ]; then
+    fm_cloud_control "$CLOUD_PRIOR_SESSION" exit ||
+      echo "warning: could not send an exit request to $ID's superseded cloud session $CLOUD_PRIOR_SESSION; stop it from claude.ai/code" >&2
+  fi
+fi
+# claude-cloud: create this incarnation's cloud session now that the worktree,
+# endpoint, and rendered launch brief exist, so its id and URL enter the task
+# record below like any other endpoint binding. A fresh spawn first removes any
+# return branch and relay record an earlier, aborted spawn of the same id left,
+# so the new bridge never relays that session's lines as this task's. A
+# creation failure stops the spawn; the abort path closes the endpoint and
+# sends the new session an exit request if any later step fails.
 if [ "$HARNESS" = claude-cloud ]; then
-  if [ "$RELAUNCH" -eq 1 ]; then
-    CLOUD_PRIOR_SESSION=$(fm_meta_get "$RELAUNCH_META" cloud_session)
-    if [ -n "$CLOUD_PRIOR_SESSION" ] && [ "$(fm_meta_get "$STATE/$ID.cloud-sync" ended_session)" != "$CLOUD_PRIOR_SESSION" ]; then
-      fm_cloud_control "$CLOUD_PRIOR_SESSION" exit ||
-        echo "warning: could not send an exit request to $ID's superseded cloud session $CLOUD_PRIOR_SESSION; stop it from claude.ai/code" >&2
-    fi
+  if [ "$RELAUNCH" -eq 0 ]; then
+    fm_cloud_delete_channel "$ID" "$PROJ_ABS" || {
+      echo "error: could not delete the stale cloud return branch $(fm_cloud_status_branch "$ID") on origin before creating $ID's session; retry once origin is reachable" >&2
+      exit 1
+    }
+    rm -f "$STATE/$ID.cloud-sync"
   fi
   CLOUD_BASE=$BASE_BRANCH
   if [ -z "$CLOUD_BASE" ]; then

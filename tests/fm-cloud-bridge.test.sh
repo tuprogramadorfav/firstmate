@@ -19,10 +19,13 @@
 #   5. Escape sends the session an interrupt request and Ctrl-C an exit
 #      request that ends the bridge; a session the service reports archived
 #      counts as stopped.
-#   6. A session that never reports gets exactly one blocked: line.
+#   6. A session that never reports gets exactly one blocked: line, also when
+#      its return branch already carries a previous session's commits.
 #   7. The bridge is a recognized agent process and its screen reads as an
 #      empty composer, so the control plane's exit preconditions hold.
 #   8. The creation transcript parser extracts the session id and URL.
+#   9. A status push rejected because another session moved the return branch
+#      is rebuilt on the new head, so no line from either session is lost.
 set -u
 
 # shellcheck source=tests/lib.sh
@@ -257,6 +260,37 @@ test_silent_session_reported_once() {
   pass "a session that never reports is surfaced once as blocked"
 }
 
+test_relaunched_silent_session_reported() {
+  setup_world relsilent ship
+  # The previous session's log, committed before this session started, which
+  # the relaunched bridge already relayed.
+  GIT_COMMITTER_DATE="@$(( $(date +%s) - 120 )) +0000" cloud status 'working [at=1]: previous session'
+  printf 'session=session_previous\nrelayed=1\n' > "$STATE/$ID.cloud-sync"
+  FIRST_STATUS_SECS=1 start_bridge
+  wait_for "the silence line" status_has 'has not reported within'
+  ! status_has 'previous session' || fail "an already relayed line must not be relayed again"
+  stop_bridge
+  pass "a relaunched session that never reports is surfaced as blocked"
+}
+
+test_rejected_push_rebuilt_on_new_head() {
+  setup_world rebuild ship
+  cloud status 'working [at=10]: replacement started'
+  # The superseded session answers its exit request after the replacement
+  # already cached the branch head.
+  git clone -q "file://$W/origin.git" "$W/cloud-previous"
+  (cd "$W/cloud-previous" && "$W/fm-cloud" status 'paused [at=11]: exiting on firstmate request') \
+    || fail "the superseded session could not push its line"
+  cloud status 'working [at=12]: replacement continues' || fail "a push rejected by the moved branch was not retried on its new head"
+  cloud ack inbox/001.msg || fail "an ack after the rebuild must push"
+  local branch
+  branch=$(FM_HOME="$W/home" FM_ROOT="$ROOT" bash -c '. "$1/bin/fm-cloud-lib.sh"; fm_cloud_status_branch "$2"' _ "$ROOT" "$ID")
+  assert_equals $'working [at=10]: replacement started\npaused [at=11]: exiting on firstmate request\nworking [at=12]: replacement continues' \
+    "$(git --git-dir="$W/origin.git" show "refs/heads/$branch:status.log")" "every line from both sessions is kept in order"
+  assert_equals inbox/001.msg "$(git --git-dir="$W/origin.git" show "refs/heads/$branch:acks")" "the ack is recorded once"
+  pass "a rejected status push is rebuilt on the moved branch head"
+}
+
 test_bridge_is_agent_with_empty_composer() {
   setup_world screen ship
   start_bridge
@@ -296,5 +330,7 @@ fm_test_run \
   test_scout_report_copied \
   test_keys_send_lifecycle_requests \
   test_silent_session_reported_once \
+  test_relaunched_silent_session_reported \
+  test_rejected_push_rebuilt_on_new_head \
   test_bridge_is_agent_with_empty_composer \
   test_parse_create_transcript

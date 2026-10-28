@@ -16,7 +16,7 @@ A cloud worker runs ship and scout tasks only.
 - a `local-only` ship, because a cloud session can deliver only by pushing its branch to GitHub and a local-only task publishes nothing;
 - a backend other than tmux or Herdr, which alone give the bridge endpoint the agent-state proofs the control plane needs;
 - a missing `claude` CLI or `jq`, a Claude Code login that is absent or not a claude.ai subscription login;
-- a project whose origin is not on github.com, or whose origin the local `gh` login cannot push to.
+- a project whose origin is not on github.com, whose origin the local `gh` login cannot push to, or whose origin `gh` does not report private (including when the visibility cannot be read), because the task's status lines, steering record names, and scout report travel through branches on origin.
 
 A refusal never falls back to a local run.
 A session the CLI does not report created stops the spawn the same way.
@@ -24,7 +24,8 @@ A session the CLI does not report created stops the spawn the same way.
 ## Requirements
 
 - The Claude Code CLI signed in with the claude.ai subscription account (`claude auth status` reports `authMethod: claude.ai`), on a plan with cloud sessions.
-- The project on github.com, with the Claude GitHub App installed on the repository or GitHub connected through `/web-setup`, so the session can clone it and push branches. Without the App, `claude --cloud` uploads the local copy as a bundle instead; the session can still push only when the GitHub connection has push access.
+- The project on github.com in a private repository, because the return branch carries the task's status lines, steering record names, and scout report through origin. There is no override for a public repository.
+- The Claude GitHub App installed on the repository or GitHub connected through `/web-setup`, so the session can clone it and push branches. Without the App, `claude --cloud` uploads the local copy as a bundle instead; the session can still push only when the GitHub connection has push access.
 - A cloud environment able to build and test the project. The CLI uses the environment chosen with `/remote-env` (the `remote.defaultEnvironmentId` user setting) or, failing that, its own default. A project's own setup belongs in that environment's setup script or in a SessionStart hook committed to the project's `.claude/settings.json` and gated on `CLAUDE_CODE_REMOTE=true` ([cloud environments](https://code.claude.com/docs/en/cloud-environments)).
 
 ### Choosing the environment per project (config/cloud-environment)
@@ -74,7 +75,7 @@ A cloud scout's deliverable is the report copied into `data/<id>/report.md`; it 
 
 - **Interrupt and exit** are messages the worker reads at its next turn boundary; the CLI cannot cancel a running cloud turn.
   `exit` sends the exit request and stops the bridge, which the control plane observes as the agent stopping.
-- **Relaunch** creates a new session for the same task and branch; a previous session that never received an exit request is sent one first.
+- **Relaunch** creates a new session for the same task and branch, which continues the commits already pushed to that branch; a previous session that never received an exit request is sent one first, also when the relaunch moves the task to a local harness.
   Relaunching onto a local harness is how a ship moves to local delivery.
 - **Recovery after a firstmate restart** needs nothing special: the bridge keeps running in its endpoint, and a restarted bridge resumes from `state/<id>.cloud-sync` without relaying or sending anything twice.
   A dead bridge is handled like any dead worker endpoint.

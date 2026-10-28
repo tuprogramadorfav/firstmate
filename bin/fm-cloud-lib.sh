@@ -54,14 +54,16 @@ fm_cloud_origin_slug() {  # <git-dir>
 
 # Refuse a cloud launch the moment a precondition is missing, naming it. Checks
 # what this machine can prove: the CLI, a claude.ai subscription login (cloud
-# sessions need one; an API key cannot create them), a github.com origin, and
-# push access to it for the local gh login, which the local delivery path needs
-# for the branch the cloud session pushes. Whether the cloud session's own
+# sessions need one; an API key cannot create them), a github.com origin, push
+# access to it for the local gh login, which the local delivery path needs for
+# the branch the cloud session pushes, and that the repository is private,
+# because the return branch carries the task's status lines, steering record
+# names, and scout report through origin. Whether the cloud session's own
 # GitHub connection can reach the repository is only provable by creating the
 # session, so that failure surfaces from fm_cloud_create or, when the session
 # starts but cannot push, from the bridge's silence report.
 fm_cloud_preflight() {  # <git-dir>
-  local dir=$1 claude_bin=${FM_CLOUD_CLAUDE:-claude} auth method slug push
+  local dir=$1 claude_bin=${FM_CLOUD_CLAUDE:-claude} auth method slug push private
   command -v "$claude_bin" >/dev/null 2>&1 || {
     echo "error: claude-cloud needs the Claude Code CLI ('claude') on PATH" >&2
     return 1
@@ -93,6 +95,11 @@ fm_cloud_preflight() {  # <git-dir>
     echo "error: claude-cloud needs push access to github.com/$slug for the local gh login, which delivers the branch the cloud session pushes; gh reports push=${push:-unreadable}" >&2
     return 1
   }
+  private=$(gh api "repos/$slug" --jq '.private' 2>/dev/null) || private=
+  [ "$private" = true ] || {
+    echo "error: claude-cloud needs github.com/$slug to be a private repository, because the task's status lines, steering record names, and scout report travel through branches on origin; gh reports private=${private:-unreadable}" >&2
+    return 1
+  }
 }
 
 # The instructions a cloud session receives: this runtime contract, the cloud
@@ -122,7 +129,7 @@ EOF
 EOF
   else
     cat <<EOF
-- Branch: fetch \`origin/$base\`, create the task branch \`$branch\` from it, and commit there, ignoring the branch this session started on. Push with \`git push -u origin $branch\` after each meaningful commit and always before reporting.
+- Branch: commit on the task branch \`$branch\`, ignoring the branch this session started on. Fetch origin; when \`origin/$branch\` exists, check it out and continue on it, keeping its commits, and otherwise create \`$branch\` from \`origin/$base\`. Push with \`git push -u origin $branch\` after each meaningful commit and always before reporting.
 - Delivery: never run no-mistakes, open a pull request, merge, or push to \`$base\`. When the work is complete, committed, and pushed, report \`done [at=<epoch>]: pushed $branch at <full commit sha>: <summary>\`. Firstmate then fetches that branch and runs this task's delivery path (mode=$mode) on the operator's machine; any follow-up instructions arrive as steering messages.
 EOF
   fi

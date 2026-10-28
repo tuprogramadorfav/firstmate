@@ -277,13 +277,16 @@ EOF
   sync_set status_head "$head"
 }
 
+# Activity counts only when it is newer than this session's start, because a
+# relaunch's return branch already carries the previous session's commits.
 check_silence() {
   local started now
   [ -z "$(sync_get silence_reported)" ] || return 0
-  [ -z "$LAST_ACTIVITY" ] || return 0
   started=$(sync_get started)
+  [ -n "$started" ] || return 0
+  [ -z "$LAST_ACTIVITY" ] || [ "$LAST_ACTIVITY" -lt "$started" ] || return 0
   now=$(date +%s)
-  [ -n "$started" ] && [ $((now - started)) -ge "$FIRST_STATUS_SECS" ] || return 0
+  [ $((now - started)) -ge "$FIRST_STATUS_SECS" ] || return 0
   append_status "blocked [at=$now]: cloud session $URL has not reported within $((FIRST_STATUS_SECS / 60)) minutes of launch; open it to check repository access and startup" || return 0
   sync_set silence_reported "$now"
   mark_busy idle cloud-silent

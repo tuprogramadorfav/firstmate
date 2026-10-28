@@ -2,7 +2,8 @@
 # Spawn and teardown behavior for the claude-cloud worker runtime.
 #
 # The real bin/fm-spawn.sh runs against a fake `claude` (login state and
-# `--cloud` session creation), a fake `gh` (push permission), and a project
+# `--cloud` session creation), a fake `gh` (push permission and repository
+# visibility), and a project
 # whose github.com origin is rewritten to a local bare repository, so the
 # return branch is real. What is pinned:
 #   1. A scout and a ship launch create the cloud session from the rendered
@@ -10,18 +11,22 @@
 #      record, arm the busy record, install no Claude hooks in the worktree, and run
 #      the bridge in the local endpoint.
 #   2. A missing login, a non-subscription login, a non-GitHub origin, missing
-#      push access, a secondmate, a local-only ship, and an unsupported backend
-#      each refuse
+#      push access, a repository not reported private, a secondmate, a
+#      local-only ship, and an unsupported backend each refuse
 #      before any task record exists or any session is created, naming the
 #      reason; nothing falls back to a local launch.
 #   3. A session the CLI does not report created stops the spawn, and a launch
-#      that fails after creation sends the created session an exit request.
+#      that fails after creation sends the created session an exit request and
+#      deletes its return branch.
 #   4. A relaunch creates a new session and sends the superseded one an exit
-#      request when its bridge never did.
+#      request when its bridge never did, also when the relaunch moves the
+#      task to a local harness.
 #   5. Cleanup tells the session the task is closed and deletes its return
 #      branch from origin, also after the task was handed to a local harness.
 #   6. config/cloud-environment selects the session's environment by project,
 #      and a malformed line refuses before anything is created.
+#   7. A fresh spawn removes the return branch and relay record an earlier
+#      spawn of the same id left behind.
 set -u
 
 # shellcheck source=tests/fixtures.sh
@@ -76,6 +81,8 @@ if [ -n "$prompt" ]; then
     printf 'Quick safety check: Is this a project you created or one you trust?\n'
     exec sleep 600
   fi
+  # The created session pushes to its return branch, as its helper would.
+  [ -z "${FM_FAKE_CLOUD_RETURN:-}" ] || git push -q origin "HEAD:refs/heads/$FM_FAKE_CLOUD_RETURN" 2>/dev/null
   if [ "${FM_FAKE_CLOUD_FAIL:-0}" = 1 ]; then
     printf 'Error: Could not create a cloud session for this repository.\n'
     exit 1
@@ -89,7 +96,13 @@ chmod +x "$fakebin/claude"
 cat > "$fakebin/gh" <<'SH'
 #!/usr/bin/env bash
 if [ "${1:-}" = api ] && [ "${2:-}" = repos/owner/repo ]; then
-  printf '%s\n' "${FM_FAKE_GH_PUSH:-true}"
+  case "${4:-}" in
+    .permissions.push) printf '%s\n' "${FM_FAKE_GH_PUSH:-true}" ;;
+    .private)
+      [ "${FM_FAKE_GH_PRIVATE:-true}" != unreadable ] || exit 1
+      printf '%s\n' "${FM_FAKE_GH_PRIVATE:-true}"
+      ;;
+  esac
   exit 0
 fi
 exit 0
@@ -146,8 +159,10 @@ test_ship_launch() {
   fm_test_spawn_brief "$home" cs2 'ship a cloud change'
   out=$(cloud_spawn cs2 --mode direct-PR --yolo off --harness claude-cloud) || fail "ship spawn failed: $out"
   prompt=$(cat "$FM_FAKE_CLOUD_COUNT.prompt.$(created_count)")
-  assert_contains "$prompt" "create the task branch \`fm/cs2\` from it" "the ship is told its task branch"
-  assert_contains "$prompt" "fetch \`origin/main\`" "the ship starts from the base branch"
+  assert_contains "$prompt" "commit on the task branch \`fm/cs2\`" "the ship is told its task branch"
+  assert_contains "$prompt" "when \`origin/fm/cs2\` exists, check it out and continue on it, keeping its commits" \
+    "a replacement session continues the commits already pushed to the task branch"
+  assert_contains "$prompt" "otherwise create \`fm/cs2\` from \`origin/main\`" "a new task branch starts from the base branch"
   assert_contains "$prompt" "runs this task's delivery path (mode=direct-PR)" "the ship is told delivery runs locally"
   assert_contains "$prompt" "never run no-mistakes, open a pull request, merge" "the cloud never delivers on its own"
   pass "a ship launch tells the cloud session its branch and leaves delivery local"
@@ -191,6 +206,8 @@ test_preflight_refusals() {
   FM_FAKE_CLAUDE_AUTH=none refuses cr1 "needs a Claude Code login" --scout --harness claude-cloud
   FM_FAKE_CLAUDE_AUTH=apikey refuses cr2 "needs a claude.ai subscription login" --scout --harness claude-cloud
   FM_FAKE_GH_PUSH=false refuses cr3 "needs push access to github.com/owner/repo" --scout --harness claude-cloud
+  FM_FAKE_GH_PRIVATE=false refuses cr8 "needs github.com/owner/repo to be a private repository" --scout --harness claude-cloud
+  FM_FAKE_GH_PRIVATE=unreadable refuses cr9 "gh reports private=unreadable" --scout --harness claude-cloud
   refuses cr4 "runs ship and scout tasks only" --secondmate --harness claude-cloud
   refuses cr7 "cannot ship mode=local-only" --mode local-only --yolo off --harness claude-cloud
   refuses cr5 "supported on the tmux and herdr backends only; backend=zellij" --scout --harness claude-cloud --backend zellij
@@ -222,9 +239,11 @@ test_creation_failure_and_abort() {
   assert_contains "$out" "still waiting after 2s, stopped" "the hang is named"
   assert_contains "$out" "Quick safety check" "the prompt it stopped on is shown"
   [ ! -e "$home/state/cf3.meta" ] || fail "a hung creation left a task record"
-  # The bridge never renders: the created session gets an exit request.
+  # The bridge never renders: the created session gets an exit request and
+  # the return branch it already pushed is deleted.
   fm_test_spawn_brief "$home" cf2
   if out=$(FM_FAKE_BRIDGE_ID=never-shown FM_CLOUD_BRIDGE_READY_POLLS=2 FM_FAKE_LAUNCH_LOG="$case_dir/cf2.launch" \
+    FM_FAKE_CLOUD_RETURN="fm-cloud/$hometag/cf2" \
     fm_test_run_spawn "$home" "$wt" "$fakebin" cf2 "$proj" --scout --harness claude-cloud); then
     fail "a launch whose bridge never started was accepted: $out"
   fi
@@ -233,22 +252,35 @@ test_creation_failure_and_abort() {
   created=$(created_count)
   assert_contains "$(cat "$FM_FAKE_CLOUD_COUNT.sent")" ">>> session_fake$created"$'\n'"FIRSTMATE CONTROL exit" \
     "the created session is sent an exit request"
+  if git --git-dir="$origin_git" rev-parse -q --verify "refs/heads/fm-cloud/$hometag/cf2" >/dev/null; then
+    fail "a failed launch left the created session's return branch on origin"
+  fi
+  [ ! -e "$home/state/cf2.cloud-sync" ] || fail "a failed launch left a relay record"
   pass "a failed creation stops the spawn and a failed launch stops the created session"
 }
 
-test_relaunch_supersedes_generation() {
-  local out meta
-  fm_test_spawn_brief "$home" rl1
-  out=$(cloud_spawn rl1 --scout --harness claude-cloud) || fail "first spawn failed: $out"
-  local first
-  first=$(sed -n 's/^cloud_session=//p' "$home/state/rl1.meta")
-  # The bridge died without sending an exit (no ended generation recorded),
-  # so the endpoint's foreground is the pane shell again: a per-case ps
-  # answers the tty query the tmux classifier makes with a lone shell and
-  # passes every other query through.
-  local relaunch_bin="$case_dir/relaunch-bin"
-  mkdir -p "$relaunch_bin"
-  cat > "$relaunch_bin/ps" <<'SH'
+test_fresh_spawn_clears_stale_channel() {
+  local out
+  # An earlier, aborted spawn of the same id left its session's return branch
+  # and relay record behind.
+  git -C "$wt" push -q "file://$origin_git" "HEAD:refs/heads/fm-cloud/$hometag/sc1"
+  printf 'session=session_stale\nrelayed=3\n' > "$home/state/sc1.cloud-sync"
+  fm_test_spawn_brief "$home" sc1
+  out=$(cloud_spawn sc1 --scout --harness claude-cloud) || fail "spawn failed: $out"
+  if git --git-dir="$origin_git" rev-parse -q --verify "refs/heads/fm-cloud/$hometag/sc1" >/dev/null; then
+    fail "a fresh spawn kept the stale return branch, whose lines its bridge would relay"
+  fi
+  [ ! -e "$home/state/sc1.cloud-sync" ] || fail "a fresh spawn kept the stale relay record"
+  pass "a fresh spawn removes the return branch and relay record an earlier spawn left"
+}
+
+# A bridge that died without sending an exit (no ended generation recorded)
+# leaves the pane shell in the endpoint's foreground: this ps answers the tty
+# query the tmux classifier makes with a lone shell and passes every other
+# query through.
+relaunch_bin="$case_dir/relaunch-bin"
+mkdir -p "$relaunch_bin"
+cat > "$relaunch_bin/ps" <<'SH'
 #!/usr/bin/env bash
 if [ "${1:-}" = -t ]; then
   case "$*" in
@@ -260,7 +292,13 @@ fi
 case "$*" in *'-p 101'*) printf 'zsh\n'; exit 0 ;; esac
 exec /bin/ps "$@"
 SH
-  chmod +x "$relaunch_bin/ps"
+chmod +x "$relaunch_bin/ps"
+
+test_relaunch_supersedes_generation() {
+  local out meta first
+  fm_test_spawn_brief "$home" rl1
+  out=$(cloud_spawn rl1 --scout --harness claude-cloud) || fail "first spawn failed: $out"
+  first=$(sed -n 's/^cloud_session=//p' "$home/state/rl1.meta")
   : > "$case_dir/rl1.launch"
   out=$(FM_FAKE_BRIDGE_ID=rl1 FM_FAKE_LAUNCH_LOG="$case_dir/rl1.launch" \
     PATH="$relaunch_bin:$PATH" fm_test_run_spawn "$home" "$wt" "$fakebin" rl1 --relaunch) || fail "relaunch failed: $out"
@@ -270,6 +308,23 @@ SH
   assert_contains "$(cat "$FM_FAKE_CLOUD_COUNT.sent")" ">>> $first"$'\n'"FIRSTMATE CONTROL exit" \
     "the superseded session is sent an exit request"
   pass "a relaunch starts a new session and stops the superseded one"
+}
+
+test_relaunch_to_local_stops_cloud_session() {
+  local out meta first
+  fm_test_spawn_brief "$home" rl2
+  out=$(cloud_spawn rl2 --mode direct-PR --yolo off --harness claude-cloud) || fail "first spawn failed: $out"
+  first=$(sed -n 's/^cloud_session=//p' "$home/state/rl2.meta")
+  : > "$case_dir/rl2.launch"
+  out=$(FM_FAKE_LAUNCH_LOG="$case_dir/rl2.launch" \
+    PATH="$relaunch_bin:$PATH" fm_test_run_spawn "$home" "$wt" "$fakebin" rl2 --relaunch --harness claude) \
+    || fail "relaunch onto a local harness failed: $out"
+  meta=$(cat "$home/state/rl2.meta")
+  assert_contains "$meta" "harness=claude" "the task now runs on the local harness"
+  assert_not_contains "$meta" "cloud_session=" "the cloud session is no longer recorded"
+  assert_contains "$(cat "$FM_FAKE_CLOUD_COUNT.sent")" ">>> $first"$'\n'"FIRSTMATE CONTROL exit" \
+    "the superseded cloud session is sent an exit request"
+  pass "a relaunch onto a local harness stops the superseded cloud session"
 }
 
 test_teardown_closes_channel() {
@@ -334,4 +389,6 @@ fm_test_run \
   test_environment_selection \
   test_preflight_refusals \
   test_creation_failure_and_abort \
-  test_relaunch_supersedes_generation
+  test_fresh_spawn_clears_stale_channel \
+  test_relaunch_supersedes_generation \
+  test_relaunch_to_local_stops_cloud_session
