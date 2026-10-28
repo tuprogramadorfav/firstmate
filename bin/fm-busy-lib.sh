@@ -44,6 +44,9 @@
 #   cortex-hook      Cortex Code per-task plugin hooks (UserPromptSubmit opens;
 #                    Stop, which also fires on an Escape interrupt, and
 #                    SessionEnd close)
+#   cloud-bridge     claude-cloud bridge (bin/fm-cloud-bridge.sh): a relayed
+#                    working:/resolved: status line opens, any other relayed
+#                    state closes
 #   codex-hook, codex-appserver  reserved: Codex, gated by
 #                    fm_busy_codex_semantic_source
 #   kimi-wire, kimi-hook  reserved: standalone Kimi, gated by fm_busy_kimi_verified
@@ -235,6 +238,7 @@ fm_busy_current_gen() {  # <state-dir> <id>
 fm_busy_sources_for_harness() {  # <harness>
   local adapter=
   case "${1:-}" in
+    claude-cloud) adapter=cloud-bridge ;;
     claude*) adapter=claude-hook ;;
     codex*)
       fm_busy_codex_semantic_source || { printf ''; return 0; }
@@ -1015,6 +1019,7 @@ fm_busy_gemini_launch_prompt_tail() {
 # trust dialog at all.
 fm_busy_launch_prompt_parked() {  # <harness>
   case "${1:-}" in
+    claude-cloud) return 1 ;;
     claude*) fm_busy_claude_launch_prompt_tail ;;
     pi | pi-signed | omp) fm_busy_pi_launch_prompt_tail ;;
     gemini) fm_busy_gemini_launch_prompt_tail ;;

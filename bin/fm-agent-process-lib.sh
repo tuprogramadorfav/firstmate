@@ -55,11 +55,17 @@ fm_agent_process_classify_name() {  # <path> [argv0] -> agent|shell|other
     # process is comm `polytoken`, the same binary name as its per-session
     # daemon), so a `*polytoken*` glob never claims an unrelated command.
     # cortex (Cortex Code) is anchored too (verified, cortex 1.1.104: a
-    # Bun-compiled single binary, comm=cortex).
-    agy|devin|command-code|polytoken|cortex) printf 'agent' ;;
+    # Bun-compiled single binary, comm=cortex). fm-cloud-bridge is the
+    # claude-cloud task endpoint (bin/fm-cloud-bridge.sh), which re-executes
+    # itself under exactly this name; it is the local agent of a cloud worker.
+    agy|devin|command-code|polytoken|cortex|fm-cloud-bridge) printf 'agent' ;;
     zsh|bash|sh|dash|ash|ksh|mksh|tcsh|csh|fish) printf 'shell' ;;
     *)
       if fm_harness_path_name "$path" >/dev/null || fm_harness_path_name "$argv0" >/dev/null; then
+        printf 'agent'
+      # On Linux the bridge's kernel name stays the interpreter's, so its
+      # anchored name is proven by argv[0] alone.
+      elif [ "${argv0##*/}" = fm-cloud-bridge ]; then
         printf 'agent'
       # cursor-agent runs as a bundled node script, so tmux reports the pane
       # command as a bare `node` that no name pattern above can own, and its

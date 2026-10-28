@@ -197,6 +197,10 @@
       "audience": "agent-runtime"
     },
     {
+      "path": ".agents/skills/harness-adapters/references/harness/claude-cloud.md",
+      "audience": "agent-runtime"
+    },
+    {
       "path": ".agents/skills/harness-adapters/references/harness/codex.md",
       "audience": "agent-runtime"
     },
@@ -335,6 +339,10 @@
     {
       "path": "docs/cd-guard.md",
       "audience": "maintainer-architecture"
+    },
+    {
+      "path": "docs/cloud-workers.md",
+      "audience": "operator-current"
     },
     {
       "path": "docs/cmux-backend.md",
@@ -530,6 +538,10 @@
     },
     {
       "path": "docs/verification/agy.md",
+      "audience": "maintainer-verification"
+    },
+    {
+      "path": "docs/verification/claude-cloud.md",
       "audience": "maintainer-verification"
     },
     {

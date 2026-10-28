@@ -3831,6 +3831,33 @@ if [ "$BACKEND" = t3code ]; then
     endpoint_close_refusal "$ID" t3code "$T" 0 || exit 1
   }
 fi
+# A claude-cloud task's cloud session outlives its local bridge, so cleanup
+# tells a session that was never sent an exit request that the task is closed
+# (a session already archived or gone counts as told), then deletes the return
+# branch (bin/fm-cloud-lib.sh). The CLI cannot archive a cloud session, so it
+# stays listed at claude.ai/code until the captain archives it there
+# (docs/cloud-workers.md). Either failure refuses here, before anything
+# irreversible, and a re-run converges because both steps are idempotent.
+# A ship handed to a local harness for delivery no longer records the cloud
+# runtime, so the bridge's relay record (state/<id>.cloud-sync) also marks a
+# task whose cloud session and return branch still need closing.
+if [ "$(meta_value "$META" harness)" = claude-cloud ] || [ -f "$STATE/$ID.cloud-sync" ]; then
+  # shellcheck source=bin/fm-cloud-lib.sh
+  . "$SCRIPT_DIR/fm-cloud-lib.sh"
+  CLOUD_SESSION=$(meta_value "$META" cloud_session)
+  [ -n "$CLOUD_SESSION" ] || CLOUD_SESSION=$(fm_meta_get "$STATE/$ID.cloud-sync" session)
+  if [ -n "$CLOUD_SESSION" ] && [ "$(fm_meta_get "$STATE/$ID.cloud-sync" ended_session)" != "$CLOUD_SESSION" ]; then
+    fm_cloud_control "$CLOUD_SESSION" closed || {
+      echo "error: could not tell $ID's cloud session $CLOUD_SESSION that the task is closed; re-run teardown once Claude Code can reach it" >&2
+      exit 1
+    }
+    printf 'ended_session=%s\n' "$CLOUD_SESSION" >> "$STATE/$ID.cloud-sync" || true
+  fi
+  fm_cloud_delete_channel "$ID" "$(meta_value "$META" project)" || {
+    echo "error: could not delete $ID's cloud return branch $(fm_cloud_status_branch "$ID") on origin; re-run teardown once origin is reachable" >&2
+    exit 1
+  }
+fi
 # Best-effort: drop the local task branch so the shared repo does not accumulate refs.
 if [ "$BACKEND" = orca ] && [ "$KIND" != secondmate ]; then
   if [ "$ORCA_PATH_MATCH_VERIFIED" != 1 ]; then
@@ -4072,7 +4099,7 @@ rm -f "$STATE/$ID.turn-ended" "$STATE/$ID.progress" \
   "$STATE/$ID.control-relaunch.brief-prior" "$STATE/$ID.control-relaunch.note" \
   "$STATE/$ID.reconcile-nudged" "$STATE/$ID.gemini-settings.json" \
   "$STATE/$ID.claude-settings.json" "$STATE/$ID.devin-config.json" \
-  "$STATE/$ID.polytoken-busy.sh" \
+  "$STATE/$ID.polytoken-busy.sh" "$STATE/$ID.cloud-sync" \
   "$STATE/.$ID.branch-outcome-index" \
   "$STATE/.secondmate-relaunch-$ID" "$STATE/.secondmate-relaunch-bound-$ID"
 # The steering inbox (bin/fm-task-inbox-lib.sh) is runtime state for the
