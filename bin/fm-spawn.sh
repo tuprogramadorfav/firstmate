@@ -1571,6 +1571,8 @@ GIT_HOOKS_DIR=
 SPAWN_LAUNCH_SENT=0
 SPAWN_ENDPOINT_CLOSED=0
 SPAWN_STAGED_LAUNCH_FILE=
+CLOUD_ABORT_SESSION=
+CLOUD_URL=
 
 spawn_fresh_commit_rollback() {
   if fm_backlog_atomic_transition rollback "$STATE/$ID.meta" \
@@ -1614,6 +1616,20 @@ spawn_orca_reclaim_launch_file() {
 
 spawn_abort_cleanup() {
   local status=$?
+  # A cloud session created by this spawn keeps running in the cloud even
+  # after its local endpoint closes, so a failed launch sends it an exit
+  # request (bin/fm-cloud-lib.sh) before anything else is unwound. A failed
+  # fresh spawn also deletes the session's return branch and relay record,
+  # which belong to no task once the spawn is gone.
+  if [ "$status" -ne 0 ] && [ -n "$CLOUD_ABORT_SESSION" ]; then
+    fm_cloud_control "$CLOUD_ABORT_SESSION" exit ||
+      echo "warning: the cloud session $CLOUD_URL for $ID could not be sent an exit request after the failed spawn; stop it from claude.ai/code" >&2
+    if [ "$RELAUNCH" -eq 0 ]; then
+      fm_cloud_delete_channel "$ID" "$PROJ_ABS" ||
+        echo "warning: could not delete the cloud return branch $(fm_cloud_status_branch "$ID") of $ID's failed spawn; the next spawn of $ID removes it" >&2
+      rm -f "$STATE/$ID.cloud-sync"
+    fi
+  fi
   if [ "$RELAUNCH_REPLACEMENT_PENDING" = 1 ] &&
     [ "$SPAWN_META_PUBLISH_STARTED" = 1 ] &&
     [ -n "$SPAWN_META_TMP" ] &&
@@ -2881,6 +2897,13 @@ launch_template() {
   # when a supported effort is requested, since a second --config-override
   # would silently discard the first (confirmed live).
   rovo) printf '%s' 'env -u CLAUDECODE -u PI_CODING_AGENT -u GROK_AGENT -u FM_PI_HARNESS __ROVOBIN__ run --yolo __MODELFLAG____ROVOCONFIGOVERRIDE__' ;;
+  # claude-cloud runs its agent in a Claude Code cloud session that this spawn
+  # creates before launch (bin/fm-cloud-lib.sh); the local endpoint runs the
+  # bridge that relays the task channels (bin/fm-cloud-bridge.sh). The brief
+  # reaches the session at creation, so the template carries no brief, and
+  # no model or effort flag, because `claude --cloud` has no verified way to
+  # select either for the session.
+  claude-cloud) printf '%s' '__CLOUDBRIDGE__' ;;
   *) return 1 ;;
   esac
 }
@@ -2980,6 +3003,36 @@ fi
 if [ "$HARNESS" = cortex ] && [ "$BACKEND" != tmux ] && [ "$BACKEND" != herdr ]; then
   echo "error: cortex is verified on the tmux and herdr backends only; backend=$BACKEND cannot prove its composer empty. Select backend tmux or herdr." >&2
   exit 1
+fi
+
+# claude-cloud is a crewmate/scout runtime only (docs/cloud-workers.md): a
+# secondmate is a firstmate primary that must run beside its own home, and a
+# local-only ship publishes nothing while a cloud session can deliver only by
+# pushing to GitHub. Its
+# local endpoint needs a recovery-grade agent-state classifier for the control
+# plane's exit and relaunch proofs, which only tmux and Herdr supply. The
+# preflight (after the project resolves, below) refuses before any worktree or
+# endpoint exists, naming the missing CLI, login, or GitHub push access, so a
+# cloud task never falls back to a local run.
+if [ "$HARNESS" = claude-cloud ]; then
+  if [ "$KIND" = secondmate ]; then
+    echo "error: claude-cloud runs ship and scout tasks only; a secondmate cannot run in a cloud session. Select a harness verified for secondmates." >&2
+    exit 1
+  fi
+  if [ "$KIND" = ship ] && [ "${MODE:-}" = local-only ]; then
+    echo "error: claude-cloud cannot ship mode=local-only: a cloud session delivers only by pushing its branch to GitHub, and a local-only task publishes nothing. Ship it with a local harness, or choose no-mistakes or direct-PR." >&2
+    exit 1
+  fi
+  if [ "$BACKEND" != tmux ] && [ "$BACKEND" != herdr ]; then
+    echo "error: claude-cloud is supported on the tmux and herdr backends only; backend=$BACKEND has no recovery-grade agent-state classifier for its bridge endpoint. Select backend tmux or herdr." >&2
+    exit 1
+  fi
+fi
+# A relaunch away from claude-cloud still stops the superseded cloud session
+# (below), so it needs the cloud library too.
+if [ "$HARNESS" = claude-cloud ] || [ "$RELAUNCH_PRIOR_HARNESS" = claude-cloud ]; then
+  # shellcheck source=bin/fm-cloud-lib.sh
+  . "$FM_ROOT/bin/fm-cloud-lib.sh"
 fi
 
 # config/crew-exclude-tools (header above): refuse before worker provisioning
@@ -3828,6 +3881,16 @@ if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ] &&
   ! git -C "$PROJ_ABS" rev-parse --verify --quiet HEAD >/dev/null 2>&1; then
   echo "error: spawn refused: project $PROJ_ABS has no commit yet (unborn HEAD), so there is nothing to branch a worktree from; make one commit in the project, for example 'git -C $PROJ_ABS commit --allow-empty -m \"chore: initial commit\"', then spawn again" >&2
   exit 1
+fi
+CLOUD_ENV_ARGS=()
+if [ "$HARNESS" = claude-cloud ]; then
+  fm_cloud_preflight "$PROJ_ABS" || exit 1
+  CLOUD_ENV_LINES=$(fm_cloud_environment_args "$CONFIG" "$(basename "$PROJ_ABS")") || exit 1
+  while IFS= read -r cloud_env_arg; do
+    [ -z "$cloud_env_arg" ] || CLOUD_ENV_ARGS+=("$cloud_env_arg")
+  done <<EOF
+$CLOUD_ENV_LINES
+EOF
 fi
 # Project capacity admission (bin/fm-project-capacity-lib.sh owns the
 # declaration, what holds a place, and why this is race-safe). A fresh worker
@@ -5964,6 +6027,10 @@ BUSY_GEN=
     ;;
   esac
   case "$WIRING_HARNESS" in
+  claude-cloud)
+    # The bridge itself writes the busy record (source cloud-bridge) from the
+    # cloud worker's relayed status lines; nothing is installed in the worktree.
+    ;;
   claude*)
     # Semantic busy-state hooks (bin/fm-busy-lib.sh): UserPromptSubmit opens
     # a turn; Stop (normal completion), StopFailure (API-error turn end),
@@ -6589,6 +6656,51 @@ META_WINDOW=$T
 [ "$BACKEND" = orca ] && META_WINDOW=$W
 [ "$BACKEND" = t3code ] && META_WINDOW=$W
 SPAWN_GEN="s$(date +%s).${BASHPID:-$$}.$RANDOM"
+# A relaunch of a claude-cloud task, onto any harness, replaces its cloud
+# session: a previous session that was never sent an exit request (its bridge
+# died rather than being stopped) is sent one first, so it stops instead of
+# competing with its replacement, local or cloud, on the same branch.
+if [ "$RELAUNCH" -eq 1 ] && [ "$RELAUNCH_PRIOR_HARNESS" = claude-cloud ]; then
+  CLOUD_PRIOR_SESSION=$(fm_meta_get "$RELAUNCH_META" cloud_session)
+  if [ -n "$CLOUD_PRIOR_SESSION" ] && [ "$(fm_meta_get "$STATE/$ID.cloud-sync" ended_session)" != "$CLOUD_PRIOR_SESSION" ]; then
+    fm_cloud_control "$CLOUD_PRIOR_SESSION" exit ||
+      echo "warning: could not send an exit request to $ID's superseded cloud session $CLOUD_PRIOR_SESSION; stop it from claude.ai/code" >&2
+  fi
+fi
+# claude-cloud: create this incarnation's cloud session now that the worktree,
+# endpoint, and rendered launch brief exist, so its id and URL enter the task
+# record below like any other endpoint binding. A fresh spawn first removes any
+# return branch and relay record an earlier, aborted spawn of the same id left,
+# so the new bridge never relays that session's lines as this task's. A
+# creation failure stops the spawn; the abort path closes the endpoint and
+# sends the new session an exit request if any later step fails.
+if [ "$HARNESS" = claude-cloud ]; then
+  if [ "$RELAUNCH" -eq 0 ]; then
+    fm_cloud_delete_channel "$ID" "$PROJ_ABS" || {
+      echo "error: could not confirm that no stale cloud return branch $(fm_cloud_status_branch "$ID") remains on origin before creating $ID's session; retry once origin is reachable" >&2
+      exit 1
+    }
+    rm -f "$STATE/$ID.cloud-sync"
+  fi
+  CLOUD_BASE=$BASE_BRANCH
+  if [ -z "$CLOUD_BASE" ]; then
+    CLOUD_BASE=$(git -C "$PROJ_ABS" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null) || CLOUD_BASE=origin/main
+    CLOUD_BASE=${CLOUD_BASE#origin/}
+  fi
+  CLOUD_SLUG=$(fm_cloud_origin_slug "$PROJ_ABS") || exit 1
+  CLOUD_PROMPT="$DATA/$ID/cloud-launch-brief.md"
+  fm_cloud_render_prompt "$ID" "$SPAWN_GEN" "$KIND" "${MODE:-}" "${BRANCH:-}" "$CLOUD_BASE" "$CLOUD_SLUG" "$BRIEF" "$FM_ROOT" >"$CLOUD_PROMPT" || {
+    echo "error: could not render the cloud launch instructions for $ID at $CLOUD_PROMPT" >&2
+    exit 1
+  }
+  CLOUD_CREATED=$(fm_cloud_create "$WT" "$CLOUD_PROMPT" "$DATA/$ID/cloud-create.log" ${CLOUD_ENV_ARGS[@]+"${CLOUD_ENV_ARGS[@]}"}) || {
+    echo "error: the cloud session for $ID could not be created; nothing was launched locally in its place" >&2
+    exit 1
+  }
+  CLOUD_SESSION=${CLOUD_CREATED%%$'\t'*}
+  CLOUD_URL=${CLOUD_CREATED#*$'\t'}
+  CLOUD_ABORT_SESSION=$CLOUD_SESSION
+fi
 SPAWN_META_PATH="$STATE/$ID.meta"
 if [ "$SPAWN_META_LOCK_HELD" != 1 ]; then
   SPAWN_META_LOCK=$(fm_meta_lock_path "$STATE/$ID.meta") || exit 1
@@ -6605,7 +6717,7 @@ SPAWN_META_PATH=$SPAWN_META_TMP
 preserve_relaunch_meta() {
   awk -F= '
     BEGIN {
-      split("window endpoint_task_id worktree project harness kind mode yolo branch tasktmp base_branch upstream_consent forge backup_remote backup_prefix model effort opencode_version account account_provider omp_profile busy_gen spawn_gen approval_mode traceparent backend herdr_session herdr_workspace_id herdr_tab_id herdr_pane_id zellij_session zellij_tab_id zellij_pane_id orca_worktree_id terminal cmux_workspace_id cmux_surface_id paseo_terminal_id paseo_workspace_id rex_server rex_session_id rex_window_id rex_block_id t3_thread_id t3_project_id tern_session_id tern_tab_id tern_block_id home projects control_relaunch_tx polytoken_session polytoken_port polytoken_credential", keys, " ")
+      split("window endpoint_task_id worktree project harness kind mode yolo branch tasktmp base_branch upstream_consent forge backup_remote backup_prefix model effort opencode_version account account_provider omp_profile busy_gen spawn_gen approval_mode traceparent backend herdr_session herdr_workspace_id herdr_tab_id herdr_pane_id zellij_session zellij_tab_id zellij_pane_id orca_worktree_id terminal cmux_workspace_id cmux_surface_id paseo_terminal_id paseo_workspace_id rex_server rex_session_id rex_window_id rex_block_id t3_thread_id t3_project_id tern_session_id tern_tab_id tern_block_id home projects control_relaunch_tx polytoken_session polytoken_port polytoken_credential cloud_session cloud_url", keys, " ")
       for (i in keys) owned[keys[i]] = 1
     }
     !($1 in owned)
@@ -6649,6 +6761,10 @@ preserve_relaunch_meta() {
   [ -z "$OMP_PROFILE_PIN" ] || echo "omp_profile=$OMP_PROFILE_PIN"
   [ -z "${BUSY_GEN:-}" ] || echo "busy_gen=$BUSY_GEN"
   echo "spawn_gen=$SPAWN_GEN"
+  if [ "$HARNESS" = claude-cloud ]; then
+    echo "cloud_session=$CLOUD_SESSION"
+    echo "cloud_url=$CLOUD_URL"
+  fi
   # Default-off writes no traceparent= line.
   # backend= is written only for a non-default (non-tmux) backend, so the
   # default path's meta stays byte-identical (absent backend= means tmux;
@@ -6878,6 +6994,11 @@ cortex)
   LAUNCH=${LAUNCH//__CORTEXPLUGIN__/"$(shell_quote "$STATE_REAL/$ID.cortex-plugin")"}
   ;;
 agy) LAUNCH=${LAUNCH//__AGYBIN__/"$(shell_quote "$AGY_BIN")"} ;;
+claude-cloud)
+  # FM_HOME and FM_ROOT pin the home tag the channel branch names derive
+  # from, because a pane created by a backend daemon inherits neither.
+  LAUNCH="FM_HOME=$(shell_quote "$FM_HOME") FM_ROOT=$(shell_quote "$FM_ROOT") bash $(shell_quote "$FM_ROOT/bin/fm-cloud-bridge.sh") $(shell_quote "$STATE_REAL") $(shell_quote "$DATA") $(shell_quote "$CONFIG") $(shell_quote "$ID")"
+  ;;
 opencode)
   # The resolved absolute path probed for the version gate above, so the pane
   # runs exactly the binary whose major was recorded. An unresolved executable
@@ -7336,6 +7457,22 @@ if [ "$HARNESS" = kimi ]; then
     exit 1
   fi
 fi
+# The bridge renders its header as soon as it has read the task record; a pane
+# that never shows it did not start the bridge, so the launch is not confirmed.
+if [ "$HARNESS" = claude-cloud ]; then
+  cloud_bridge_ready=0
+  for _ in $(seq 1 "${FM_CLOUD_BRIDGE_READY_POLLS:-100}"); do
+    if fm_backend_capture "$BACKEND" "$T" 40 "$W" 2>/dev/null | grep -qF "fm-cloud-bridge  task $ID "; then
+      cloud_bridge_ready=1
+      break
+    fi
+    sleep 0.2
+  done
+  if [ "$cloud_bridge_ready" != 1 ]; then
+    echo "error: the claude-cloud bridge for $ID did not start in $T; the cloud session $CLOUD_URL is being sent an exit request" >&2
+    exit 1
+  fi
+fi
 if [ "$HARNESS" = rovo ]; then
   if ! rovo_wait_for_ready; then
     rovo_spawn_fail "rovo did not show a verified ready signal before brief delivery in window $T"
@@ -7488,4 +7625,5 @@ SPAWN_ACCOUNT=
 # Opt-in Herdr project groups (docs/herdr-backend.md "Project groups") tag the
 # new endpoint now rather than at the next watcher poll; off costs one file test.
 [ ! -e "$CONFIG/herdr-project-groups" ] || [ "$BACKEND" != herdr ] || FM_HOME=$FM_HOME FM_STATE_OVERRIDE=$STATE FM_CONFIG_OVERRIDE=$CONFIG "$SCRIPT_DIR/fm-herdr-groups.sh" sync "$ID" || true
+CLOUD_ABORT_SESSION=
 echo "spawned $ID harness=$HARNESS kind=$KIND$SPAWN_DELIVERY window=$META_WINDOW worktree=$WT$SPAWN_ACCOUNT"

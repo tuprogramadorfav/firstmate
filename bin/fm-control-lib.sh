@@ -64,7 +64,7 @@ fm_control_verb_allowed() {  # <verb>
 # section 4's verified-adapter list; an unverified adapter is refused rather
 # than guessed at, exactly as a spawn on it would be.
 fm_control_harnesses() {
-  printf '%s\n' claude codex opencode pi pi-signed grok kimi cursor gemini muse rovo omp agy devin commandcode polytoken cortex
+  printf '%s\n' claude claude-cloud codex opencode pi pi-signed grok kimi cursor gemini muse rovo omp agy devin commandcode polytoken cortex
 }
 
 fm_control_harness_supported() {  # <harness>
@@ -94,6 +94,7 @@ fm_control_harness_family() {  # <recorded-harness>
     commandcode) printf 'commandcode' ;;
     polytoken) printf 'polytoken' ;;
     cortex) printf 'cortex' ;;
+    claude-cloud) printf 'claude-cloud' ;;
     claude*) printf 'claude' ;;
     codex*) printf 'codex' ;;
     opencode*) printf 'opencode' ;;
@@ -117,7 +118,7 @@ fm_control_harness_supports_kind() {  # <harness> <kind>
   local harness=${1-} kind=${2-}
   fm_control_harness_supported "$harness" || return 1
   case "$harness" in
-    muse|gemini|rovo|agy|devin|commandcode|polytoken|cortex) [ "$kind" != secondmate ] || return 1 ;;
+    muse|gemini|rovo|agy|devin|commandcode|polytoken|cortex|claude-cloud) [ "$kind" != secondmate ] || return 1 ;;
   esac
   return 0
 }
@@ -134,7 +135,7 @@ fm_control_harness_supports_kind() {  # <harness> <kind>
 fm_control_interrupt_transport() {  # <harness>
   case "${1-}" in
     polytoken) printf 'rest' ;;
-    claude|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|devin|commandcode) printf 'key' ;;
+    claude|claude-cloud|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|devin|commandcode) printf 'key' ;;
     *) return 1 ;;
   esac
 }
@@ -150,10 +151,12 @@ fm_control_interrupt_transport() {  # <harness>
 # afterwards, and /quit exit (verified omp 18.1.2 in a PTY, re-verified 18.1.11
 # through Herdr). cortex cancels on a single Escape, printing the Interrupted row
 # with an idle composer and firing its Stop hook; an Escape pressed on an idle
-# composer does nothing (verified live, cortex 1.1.104).
+# composer does nothing (verified live, cortex 1.1.104). claude-cloud's
+# Escape reaches its local bridge, which sends the cloud session an interrupt
+# request it honors at its next turn boundary (bin/fm-cloud-bridge.sh).
 fm_control_interrupt_key() {  # <harness>
   case "${1-}" in
-    claude|codex|opencode|pi|pi-signed|omp|kimi|cursor|gemini|muse|rovo|agy|devin|commandcode|cortex) printf 'Escape' ;;
+    claude|claude-cloud|codex|opencode|pi|pi-signed|omp|kimi|cursor|gemini|muse|rovo|agy|devin|commandcode|cortex) printf 'Escape' ;;
     grok) printf 'C-c' ;;
     *) return 1 ;;
   esac
@@ -166,7 +169,7 @@ fm_control_interrupt_key() {  # <harness>
 fm_control_interrupt_repeat() {  # <harness>
   case "${1-}" in
     opencode|devin) printf '2' ;;
-    claude|codex|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|commandcode|cortex) printf '1' ;;
+    claude|claude-cloud|codex|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|commandcode|cortex) printf '1' ;;
     *) return 1 ;;
   esac
 }
@@ -185,7 +188,7 @@ fm_control_interrupt_repeat() {  # <harness>
 fm_control_interrupt_arm_signal() {  # <harness>
   case "${1-}" in
     devin) printf '%s' 'esc again to interrupt' ;;
-    claude|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|commandcode|cortex) ;;
+    claude|claude-cloud|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|commandcode|cortex) ;;
     *) return 1 ;;
   esac
 }
@@ -200,7 +203,7 @@ fm_control_interrupt_arm_signal() {  # <harness>
 fm_control_interrupt_press_gap() {  # <harness>
   case "${1-}" in
     devin|commandcode) printf '0.5' ;;
-    claude|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|cortex) printf '0.2' ;;
+    claude|claude-cloud|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|cortex) printf '0.2' ;;
     *) return 1 ;;
   esac
 }
@@ -223,7 +226,7 @@ fm_control_interrupt_hazard_signal() {  # <harness>
     # a hazard surface on its path; the /quit exit opens only the slash palette,
     # where Enter accepts the preselected /quit row (verified live).
     polytoken) ;;
-    claude|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|cortex) ;;
+    claude|claude-cloud|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|muse|rovo|agy|cortex) ;;
     *) return 1 ;;
   esac
 }
@@ -244,7 +247,7 @@ fm_control_interrupt_hazard_signal() {  # <harness>
 fm_control_interrupt_clear_key() {  # <harness>
   case "${1-}" in
     muse) printf 'C-u' ;;
-    claude|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|rovo|agy|devin|commandcode|cortex) ;;
+    claude|claude-cloud|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|rovo|agy|devin|commandcode|cortex) ;;
     *) return 1 ;;
   esac
 }
@@ -259,7 +262,7 @@ fm_control_interrupt_ack_source() {  # <harness>
     # rovo's TUI prints "Agent cancelled" on Escape, but for parity with
     # claude/cursor this stays 'none': the ack is a rendered string, not a
     # recorded state source, and rovo has no busy wiring to confirm against.
-    claude|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|rovo|agy|devin|commandcode|cortex) printf 'none' ;;
+    claude|claude-cloud|codex|opencode|pi|pi-signed|omp|grok|kimi|cursor|gemini|rovo|agy|devin|commandcode|cortex) printf 'none' ;;
     *) return 1 ;;
   esac
 }
@@ -280,6 +283,9 @@ fm_control_exit_command() {  # <harness> [opencode-major]
       esac
       ;;
     claude|grok|kimi|cursor|muse|rovo) printf '/exit' ;;
+    # claude-cloud's bridge takes Ctrl-C as its exit: it sends the cloud
+    # session an exit request and ends (bin/fm-cloud-bridge.sh).
+    claude-cloud) printf 'C-c' ;;
     codex|pi|pi-signed|omp|gemini|agy|devin|commandcode|polytoken|cortex) printf '/quit' ;;
     *) return 1 ;;
   esac
