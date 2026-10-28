@@ -200,6 +200,19 @@ fm_cloud_environment_args() {  # <config-dir> <project-name>
   esac
 }
 
+# Drop the Herdr pane identity from this (sub)shell, for a local Claude Code
+# CLI run. The CLI starts a local session, and Claude's Herdr integration
+# reports that session from its SessionStart hook to whatever pane
+# HERDR_PANE_ID names. During a spawn that is the task's pane, and inside the
+# bridge it is the bridge's own pane, so the short-lived CLI would take the
+# pane's agent status authority: Herdr then ignores the bridge's own
+# registration and reads the running bridge as dead, so `fm-control exit` and
+# `relaunch` never send it the exit key and type the replacement's launch into
+# it. Call it only in a subshell that runs the CLI.
+fm_cloud_forget_pane() {
+  unset HERDR_ENV HERDR_SESSION HERDR_SOCKET_PATH HERDR_PANE_ID HERDR_TAB_ID HERDR_WORKSPACE_ID
+}
+
 # Parse the creation transcript `claude --cloud <prompt>` prints. Prints
 # "<session-id>\t<url>"; nonzero when either is absent. The CLI writes the URL
 # as `View: https://claude.ai/code/<session-id>?...` (verified, Claude Code
@@ -230,7 +243,7 @@ fm_cloud_create() {  # <dir> <prompt-file> <log> [cli-arg...]
   shift 3
   : > "$log" || return 1
   if [ "$(uname -s)" = Darwin ]; then
-    (cd "$dir" && exec script -q -F "$log" "$claude_bin" "$@" --cloud "$(cat "$prompt_file")" </dev/null >/dev/null 2>&1) &
+    (cd "$dir" && fm_cloud_forget_pane && exec script -q -F "$log" "$claude_bin" "$@" --cloud "$(cat "$prompt_file")" </dev/null >/dev/null 2>&1) &
     pid=$!
   else
     # util-linux script takes the command as one shell string, so the exact
@@ -238,7 +251,7 @@ fm_cloud_create() {  # <dir> <prompt-file> <log> [cli-arg...]
     wrapper=$(mktemp "${TMPDIR:-/tmp}/fm-cloud-create.XXXXXX") || return 1
     # shellcheck disable=SC2016 # the prompt is read when the wrapper runs
     { printf '#!/usr/bin/env bash\nexec'; printf ' %q' "$claude_bin" "$@" --cloud; printf ' "$(cat %q)"\n' "$prompt_file"; } > "$wrapper"
-    (cd "$dir" && exec script -q -e -f -c "bash $(printf '%q' "$wrapper")" "$log" </dev/null >/dev/null 2>&1) &
+    (cd "$dir" && fm_cloud_forget_pane && exec script -q -e -f -c "bash $(printf '%q' "$wrapper")" "$log" </dev/null >/dev/null 2>&1) &
     pid=$!
   fi
   while kill -0 "$pid" 2>/dev/null; do
@@ -267,7 +280,7 @@ fm_cloud_create() {  # <dir> <prompt-file> <log> [cli-arg...]
 # either; any other failure returns 1 and is worth retrying.
 fm_cloud_send() {  # <session-id> <message>
   local claude_bin=${FM_CLOUD_CLAUDE:-claude} out error
-  out=$(printf '%s' "$2" | "$claude_bin" -p --cloud "$1" --output-format json 2>&1) || true
+  out=$(fm_cloud_forget_pane; printf '%s' "$2" | "$claude_bin" -p --cloud "$1" --output-format json 2>&1) || true
   if [ "$(printf '%s' "$out" | jq -r '.ok // false' 2>/dev/null)" = true ]; then
     return 0
   fi

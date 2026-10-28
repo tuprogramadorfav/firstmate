@@ -12,6 +12,15 @@
 # standing in for the cloud service, and drives the real bin/fm-control.sh
 # interrupt, exit, and relaunch --harness claude through it.
 #
+# The fake CLI also does what Claude Code's Herdr integration does when a local
+# session starts: it reports that session for the pane HERDR_PANE_ID names,
+# which takes the pane's agent status authority. A cloud session created or
+# messaged with the task pane's identity in its environment therefore made
+# Herdr ignore the bridge's own registration and read the running bridge as
+# dead, so exit never sent it the exit key and relaunch typed the local
+# worker's launch into it. The session is created here as bin/fm-spawn.sh
+# creates it, with the task pane's identity exported.
+#
 # The replacement local claude is a stand-in that reports itself to Herdr and
 # then runs as an agent-named process, so no real harness is launched, and
 # CLAUDE_CONFIG_DIR points the launch's trust registration at the scratch tree.
@@ -93,11 +102,21 @@ git -C "$PROJ" remote add origin "file://$SCRATCH/origin.git"
 git -C "$PROJ" worktree add --quiet -b "fm/$ID" "$WT"
 
 # The fake Claude Code CLI: every message queued into the cloud session is
-# appended to sent.log framed by its session id.
+# appended to sent.log framed by its session id, and `--cloud <prompt>`
+# prints the creation transcript line bin/fm-cloud-lib.sh parses. Any run with
+# a Herdr pane identity first claims that pane as the integration would.
 SENT="$SCRATCH/sent.log"
 : > "$SENT"
 cat > "$SCRATCH/cloud-claude" <<SH
 #!/usr/bin/env bash
+if [ "\${HERDR_ENV:-}" = 1 ] && [ -n "\${HERDR_PANE_ID:-}" ]; then
+  herdr pane report-agent-session "\$HERDR_PANE_ID" --source herdr:claude --agent claude \\
+    --agent-session-id "fake-local-\$\$" --session '$SESSION' >/dev/null 2>&1
+fi
+if [ "\${1:-}" = --cloud ]; then
+  printf 'View: https://claude.ai/code/session_cherdr?via=cli\n'
+  exit 0
+fi
 if [ "\${1:-}" = -p ] && [ "\${2:-}" = --cloud ]; then
   { printf '>>> %s\n' "\$3"; cat; printf '\n<<<\n'; } >> '$SENT'
   printf '{"ok":true,"session_id":"%s","url":"https://claude.ai/code/%s"}\n' "\$3" "\$3"
@@ -137,7 +156,17 @@ EOF
 [ -n "$TAB_ID" ] && [ -n "$PANE_ID" ] || fail "create_task did not return tab/pane ids"
 T="$SESSION:$PANE_ID"
 
-CLOUD_SESSION=session_cherdr
+# Create the session with the task pane's Herdr identity exported, as
+# bin/fm-spawn.sh runs fm_cloud_create once the task's pane exists.
+printf 'cloud instructions\n' > "$SCRATCH/cloud-prompt.md"
+# shellcheck disable=SC2016 # the single-quoted script expands in the inner shell
+CREATED=$(env HERDR_ENV=1 HERDR_PANE_ID="$PANE_ID" HERDR_SESSION="$SESSION" \
+  FM_HOME="$HOME_DIR" FM_ROOT="$ROOT" FM_CLOUD_CLAUDE="$SCRATCH/cloud-claude" \
+  bash -c '. "$1/bin/fm-cloud-lib.sh"; fm_cloud_create "$2" "$3" "$4"' \
+  _ "$ROOT" "$WT" "$SCRATCH/cloud-prompt.md" "$SCRATCH/cloud-create.log") \
+  || fail "fm_cloud_create failed: $(cat "$SCRATCH/cloud-create.log")"
+CLOUD_SESSION=${CREATED%%$'\t'*}
+[ "$CLOUD_SESSION" = session_cherdr ] || fail "fm_cloud_create should report session_cherdr, got: $CREATED"
 BUSY_GEN=$("$ROOT/bin/fm-busy-event.sh" arm "$STATE" "$ID")
 fm_write_meta "$STATE/$ID.meta" \
   "window=$T" "endpoint_task_id=$ID" "worktree=$WT" "project=$PROJ" \
