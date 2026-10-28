@@ -34,6 +34,10 @@ set -u
 
 TMP=$(fm_test_tmproot fm-cloud-bridge) || exit 1
 fm_git_identity
+# A bridge inside a Herdr pane reports that pane to Herdr's agent registry, so
+# a run from the developer's own Herdr pane must not hand the bridges it starts
+# that pane's identity. tests/fm-cloud-bridge-herdr-e2e.test.sh covers Herdr.
+unset HERDR_ENV HERDR_PANE_ID HERDR_TAB_ID HERDR_WORKSPACE_ID HERDR_SOCKET_PATH HERDR_SESSION
 
 BRIDGE_PID=
 FIFO_FD_OPEN=0

@@ -44,6 +44,14 @@
 # with an empty `❯ ` composer row because nothing typed here is ever kept as
 # pending input.
 #
+# Herdr has no detection entry for this program, so on Herdr (HERDR_ENV=1 and
+# a pane id in the environment) the bridge reports its own pane to Herdr's
+# agent registry as a `claude-cloud` agent from source firstmate:cloud-bridge:
+# idle at start, working or idle with each relayed line, released on exit.
+# Without it Herdr answers agent_not_found, the control plane reads the live
+# bridge as dead, and its verbs, the doorbell, and teardown treat it as gone.
+# Outside Herdr the report is a no-op.
+#
 # Durable relay progress lives in state/<id>.cloud-sync (relayed line count,
 # sent steering records, last relayed report blob, the session it belongs to,
 # and the session sent an exit), so a restarted bridge resumes where the
@@ -136,7 +144,19 @@ append_status() {  # <line>
   fi
 }
 
+herdr_report() {  # <working|idle|release>
+  [ "${HERDR_ENV:-}" = 1 ] && [ -n "${HERDR_PANE_ID:-}" ] || return 0
+  local herdr=${HERDR_BIN_PATH:-herdr}
+  if [ "$1" = release ]; then
+    "$herdr" pane release-agent "$HERDR_PANE_ID" --source firstmate:cloud-bridge --agent claude-cloud >/dev/null 2>&1
+  else
+    "$herdr" pane report-agent "$HERDR_PANE_ID" --source firstmate:cloud-bridge --agent claude-cloud --state "$1" >/dev/null 2>&1
+  fi
+  return 0
+}
+
 mark_busy() {  # <busy|idle> <event>
+  if [ "$1" = busy ]; then herdr_report working; else herdr_report idle; fi
   [ -n "$BUSY_GEN" ] || return 0
   set -- "$1" --gen "$BUSY_GEN" --source cloud-bridge --event "$2"
   [ "$1" = idle ] && set -- "$@" --turn-ended
@@ -339,6 +359,8 @@ request_exit() {
   exit 1
 }
 
+trap 'herdr_report release' EXIT
+herdr_report idle
 render
 while :; do
   sync_once

@@ -8,7 +8,7 @@ The router owns the crewmate/scout-only boundary; a secondmate or primary is ref
 
 | Fact | Value |
 |---|---|
-| Endpoint program | `../../../bin/fm-cloud-bridge.sh`, re-executed under the anchored process name `fm-cloud-bridge`; it is the endpoint's agent for liveness and exit proofs. |
+| Endpoint program | `../../../bin/fm-cloud-bridge.sh`, re-executed under the anchored process name `fm-cloud-bridge`; it is the endpoint's agent for liveness and exit proofs. On Herdr it registers its pane as agent `claude-cloud` from source `firstmate:cloud-bridge` (idle at start, working or idle with each relayed line) and releases the registration on exit, because Herdr reads liveness only from its agent registry. |
 | Busy state | Written by the bridge (source `cloud-bridge`) from relayed status lines: `working:` and `resolved:` open a turn, every other state closes it and touches `state/<id>.turn-ended`. |
 | Interrupt | One Escape; the bridge sends the session an interrupt request it honors at its next turn boundary, so cancellation stays unconfirmed. |
 | Exit command | `C-c`; the bridge sends the session an exit request and ends, so the endpoint reads agent-free. |

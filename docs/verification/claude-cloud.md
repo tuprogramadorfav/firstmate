@@ -41,5 +41,25 @@ The terminal multiplexer was the suite's spawn-world tmux fake, and each bridge 
 | Scout | `done` arrived within a minute and the report published with `fm-cloud report` was copied byte for byte to `data/cloud-e2e-scout/report.md`; `bin/fm-crew-state.sh` read `state: done · source: status-log`. |
 | Cleanup | `bin/fm-teardown.sh` completed for both; the scout's session (never sent an exit) was told the task is closed, the ship's (already exited) was not, and both return branches were deleted from origin. |
 
-Not exercised live: the control plane's `bin/fm-control.sh` verbs and the bridge's agent identity on a real tmux or Herdr pane, the `config/cloud-environment` selectors, and a message reaching a session whose VM had been reclaimed.
+## Herdr lifecycle control
+
+Recorded 2026-10-27 with Herdr 0.9.1 in an isolated `fm-lab-` session. The real bridge ran in a task pane, and a fake Claude Code CLI stood in for the cloud service.
+Herdr has no detection entry for the bridge, and before the bridge reported itself `herdr agent get` answered `agent_not_found` for its pane, so `fm_backend_agent_state` read a running bridge as `dead`:
+
+- `bin/fm-control.sh <id> interrupt` refused.
+- `exit` printed `already-stopped` while the bridge kept running, and no exit request was sent.
+- `relaunch --harness claude` typed the local launch lines into the still-running bridge.
+
+With the bridge reporting its pane (`pane report-agent --source firstmate:cloud-bridge --agent claude-cloud`, `release-agent` on exit), the same pane gave these results:
+
+| Step | Observed |
+| --- | --- |
+| Running bridge | `fm_backend_agent_state herdr` read `alive`. |
+| `fm-control interrupt` | `interrupt-delivered … verified=agent-alive`; the session was sent the interrupt request. |
+| `fm-control exit` | The bridge sent the exit request and ended; `agent get` answered `agent_not_found` and the pane read `dead`. |
+| `fm-control relaunch --harness claude --note …` | The bridge was stopped, and the superseded session was sent an exit request. A stand-in local claude started in the same pane and read `alive`, and the record named `harness=claude`. |
+
+[`tests/fm-cloud-bridge-herdr-e2e.test.sh`](../../tests/fm-cloud-bridge-herdr-e2e.test.sh) is that regression; rerun it after every Herdr upgrade.
+
+Not exercised live: the control plane's verbs on a real tmux pane, the `config/cloud-environment` selectors, and a message reaching a session whose VM had been reclaimed.
 The portable regressions are [`tests/fm-cloud-bridge.test.sh`](../../tests/fm-cloud-bridge.test.sh) and [`tests/fm-cloud-spawn.test.sh`](../../tests/fm-cloud-spawn.test.sh).
