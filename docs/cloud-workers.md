@@ -55,12 +55,12 @@ The session cannot reach the operator's machine, so the task channels cross thro
 | Channel | Path |
 | --- | --- |
 | Steering | Each record `bin/fm-send.sh` writes to the task inbox is sent once into the session with `claude -p <message> --cloud <session>`, which wakes an idle session. The record moves to `handled/` only when the worker acknowledges it, so the inbox's re-ring and escalation still measure the worker. |
-| Status | The worker records each status line with the `fm-cloud` helper the instructions install, which pushes it to the return branch `fm-cloud/<home-tag>/<task-id>` on origin. The bridge appends each new line verbatim to `state/<id>.status`, so it wakes firstmate and classifies exactly as a local worker's line, and marks the task busy on `working:` or `resolved:` and idle on any other state. |
+| Status | The worker records each status line with the `fm-cloud` helper the instructions install, which pushes it to the return branch `fm-cloud/<home-tag>/<task-id>` on origin, in a status log of that session's own (`status/<spawn_gen>.log`), so a superseded session's late lines are never relayed as its replacement's. The bridge appends each new line verbatim to `state/<id>.status`, so it wakes firstmate and classifies exactly as a local worker's line, and marks the task busy on `working:` or `resolved:` and idle on any other state. |
 | Scout report | The worker publishes the report to the return branch; the bridge copies it to `data/<id>/report.md`. |
 | Lifecycle | `bin/fm-control.sh` interrupt and exit keys reach the bridge, which sends the session an interrupt or exit request as a message. |
 
 The bridge polls the return branch every 30 seconds (`FM_CLOUD_POLL_SECS`) and at once when the inbox doorbell rings.
-A session that reports nothing within 15 minutes of launch (`FM_CLOUD_FIRST_STATUS_SECS`) gets one `blocked:` line, because repository access or startup most likely failed.
+A session that writes no status line of its own within 15 minutes of launch (`FM_CLOUD_FIRST_STATUS_SECS`) gets one `blocked:` line, because repository access or startup most likely failed.
 [`bin/fm-cloud-lib.sh`](../bin/fm-cloud-lib.sh) owns the branch name, the instructions, session creation, and sending; [`bin/fm-cloud-worker.sh`](../bin/fm-cloud-worker.sh) is the cloud-side helper.
 
 ## Delivery
@@ -79,7 +79,7 @@ A cloud scout's deliverable is the report copied into `data/<id>/report.md`; it 
   Relaunching onto a local harness is how a ship moves to local delivery.
 - **Recovery after a firstmate restart** needs nothing special: the bridge keeps running in its endpoint, and a restarted bridge resumes from `state/<id>.cloud-sync` without relaying or sending anything twice.
   A dead bridge is handled like any dead worker endpoint.
-- **Cleanup** tells a session that was never sent an exit request that the task is closed, then deletes the return branch; either failure refuses cleanup before anything irreversible, and a re-run converges.
+- **Cleanup** tells a session that was never sent an exit request that the task is closed, then deletes the return branch; either failure, including origin not answering whether the branch exists, refuses cleanup before anything irreversible, and a re-run converges.
 
 ## Limits
 

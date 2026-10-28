@@ -20,7 +20,8 @@
 #      request that ends the bridge; a session the service reports archived
 #      counts as stopped.
 #   6. A session that never reports gets exactly one blocked: line, also when
-#      its return branch already carries a previous session's commits.
+#      a superseded session keeps writing to the same return branch, whose
+#      lines are never relayed.
 #   7. The bridge is a recognized agent process and its screen reads as an
 #      empty composer, so the control plane's exit preconditions hold.
 #   8. The creation transcript parser extracts the session id and URL.
@@ -80,15 +81,27 @@ setup_world() {  # <case> <kind>
   fm_write_meta "$STATE/$ID.meta" \
     "window=fm:$ID" "endpoint_task_id=$ID" "worktree=$W/wt" "project=$W/project" \
     "harness=claude-cloud" "kind=$kind" "branch=fm/$ID" "mode=no-mistakes" \
-    "busy_gen=$BUSY_GEN" "cloud_session=$SESSION" "cloud_url=https://claude.ai/code/$SESSION"
+    "busy_gen=$BUSY_GEN" "spawn_gen=s1.$name" "cloud_session=$SESSION" "cloud_url=https://claude.ai/code/$SESSION"
   : > "$STATE/$ID.status"
-  # The rendered helper, installed as the cloud session would install it.
   printf 'task body\n' > "$W/brief.md"
-  FM_HOME="$W/home" FM_ROOT="$ROOT" bash -c '. "$1/bin/fm-cloud-lib.sh"; fm_cloud_render_prompt "$2" "$3" no-mistakes "fm/$2" main owner/repo "$4" "$1"' \
-    _ "$ROOT" "$ID" "$kind" "$W/brief.md" > "$W/prompt.md"
-  sed -n '/^--- fm-cloud helper begin ---$/,/^--- fm-cloud helper end ---$/p' "$W/prompt.md" \
-    | sed '1d;$d' > "$W/fm-cloud"
-  chmod +x "$W/fm-cloud"
+  KIND=$kind
+  render_helper "s1.$name" "$W/fm-cloud"
+}
+
+# The helper rendered for one session incarnation, installed as the cloud
+# session would install it.
+render_helper() {  # <spawn-gen> <path>
+  FM_HOME="$W/home" FM_ROOT="$ROOT" bash -c '. "$1/bin/fm-cloud-lib.sh"; fm_cloud_render_prompt "$2" "$3" "$4" no-mistakes "fm/$2" main owner/repo "$5" "$1"' \
+    _ "$ROOT" "$ID" "$1" "$KIND" "$W/brief.md" > "$2.prompt.md"
+  sed -n '/^--- fm-cloud helper begin ---$/,/^--- fm-cloud helper end ---$/p' "$2.prompt.md" \
+    | sed '1d;$d' > "$2"
+  chmod +x "$2"
+}
+
+status_log_on_origin() {  # <spawn-gen>
+  local branch
+  branch=$(FM_HOME="$W/home" FM_ROOT="$ROOT" bash -c '. "$1/bin/fm-cloud-lib.sh"; fm_cloud_status_branch "$2"' _ "$ROOT" "$ID")
+  git --git-dir="$W/origin.git" show "refs/heads/$branch:status/$1.log"
 }
 
 cloud() {  # <args...> - run the helper from the cloud clone
@@ -262,15 +275,18 @@ test_silent_session_reported_once() {
 
 test_relaunched_silent_session_reported() {
   setup_world relsilent ship
-  # The previous session's log, committed before this session started, which
-  # the relaunched bridge already relayed.
-  GIT_COMMITTER_DATE="@$(( $(date +%s) - 120 )) +0000" cloud status 'working [at=1]: previous session'
+  # The superseded session's log, which its own bridge already relayed.
+  render_helper s0.previous "$W/fm-cloud-previous"
+  (cd "$W/cloud" && "$W/fm-cloud-previous" status 'working [at=1]: previous session')
   printf 'session=session_previous\nrelayed=1\n' > "$STATE/$ID.cloud-sync"
-  FIRST_STATUS_SECS=1 start_bridge
+  FIRST_STATUS_SECS=2 start_bridge
+  # The superseded session answers its exit request after this one started.
+  (cd "$W/cloud" && "$W/fm-cloud-previous" status 'paused [at=2]: exiting on firstmate request')
   wait_for "the silence line" status_has 'has not reported within'
-  ! status_has 'previous session' || fail "an already relayed line must not be relayed again"
+  ! status_has 'previous session' || fail "the superseded session's lines must not be relayed"
+  ! status_has 'exiting on firstmate request' || fail "the superseded session's exit line must not be relayed"
   stop_bridge
-  pass "a relaunched session that never reports is surfaced as blocked"
+  pass "a relaunched session that never reports is surfaced as blocked, whatever its predecessor writes"
 }
 
 test_rejected_push_rebuilt_on_new_head() {
@@ -279,14 +295,17 @@ test_rejected_push_rebuilt_on_new_head() {
   # The superseded session answers its exit request after the replacement
   # already cached the branch head.
   git clone -q "file://$W/origin.git" "$W/cloud-previous"
-  (cd "$W/cloud-previous" && "$W/fm-cloud" status 'paused [at=11]: exiting on firstmate request') \
+  render_helper s0.previous "$W/fm-cloud-previous"
+  (cd "$W/cloud-previous" && "$W/fm-cloud-previous" status 'paused [at=11]: exiting on firstmate request') \
     || fail "the superseded session could not push its line"
   cloud status 'working [at=12]: replacement continues' || fail "a push rejected by the moved branch was not retried on its new head"
   cloud ack inbox/001.msg || fail "an ack after the rebuild must push"
+  assert_equals $'working [at=10]: replacement started\nworking [at=12]: replacement continues' \
+    "$(status_log_on_origin s1.rebuild)" "the replacement's lines are kept in order in its own log"
+  assert_equals 'paused [at=11]: exiting on firstmate request' \
+    "$(status_log_on_origin s0.previous)" "the rebuild keeps the superseded session's line in its log"
   local branch
   branch=$(FM_HOME="$W/home" FM_ROOT="$ROOT" bash -c '. "$1/bin/fm-cloud-lib.sh"; fm_cloud_status_branch "$2"' _ "$ROOT" "$ID")
-  assert_equals $'working [at=10]: replacement started\npaused [at=11]: exiting on firstmate request\nworking [at=12]: replacement continues' \
-    "$(git --git-dir="$W/origin.git" show "refs/heads/$branch:status.log")" "every line from both sessions is kept in order"
   assert_equals inbox/001.msg "$(git --git-dir="$W/origin.git" show "refs/heads/$branch:acks")" "the ack is recorded once"
   pass "a rejected status push is rebuilt on the moved branch head"
 }

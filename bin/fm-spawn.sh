@@ -6655,6 +6655,7 @@ fi
 META_WINDOW=$T
 [ "$BACKEND" = orca ] && META_WINDOW=$W
 [ "$BACKEND" = t3code ] && META_WINDOW=$W
+SPAWN_GEN="s$(date +%s).${BASHPID:-$$}.$RANDOM"
 # A relaunch of a claude-cloud task, onto any harness, replaces its cloud
 # session: a previous session that was never sent an exit request (its bridge
 # died rather than being stopped) is sent one first, so it stops instead of
@@ -6676,7 +6677,7 @@ fi
 if [ "$HARNESS" = claude-cloud ]; then
   if [ "$RELAUNCH" -eq 0 ]; then
     fm_cloud_delete_channel "$ID" "$PROJ_ABS" || {
-      echo "error: could not delete the stale cloud return branch $(fm_cloud_status_branch "$ID") on origin before creating $ID's session; retry once origin is reachable" >&2
+      echo "error: could not confirm that no stale cloud return branch $(fm_cloud_status_branch "$ID") remains on origin before creating $ID's session; retry once origin is reachable" >&2
       exit 1
     }
     rm -f "$STATE/$ID.cloud-sync"
@@ -6688,7 +6689,7 @@ if [ "$HARNESS" = claude-cloud ]; then
   fi
   CLOUD_SLUG=$(fm_cloud_origin_slug "$PROJ_ABS") || exit 1
   CLOUD_PROMPT="$DATA/$ID/cloud-launch-brief.md"
-  fm_cloud_render_prompt "$ID" "$KIND" "${MODE:-}" "${BRANCH:-}" "$CLOUD_BASE" "$CLOUD_SLUG" "$BRIEF" "$FM_ROOT" >"$CLOUD_PROMPT" || {
+  fm_cloud_render_prompt "$ID" "$SPAWN_GEN" "$KIND" "${MODE:-}" "${BRANCH:-}" "$CLOUD_BASE" "$CLOUD_SLUG" "$BRIEF" "$FM_ROOT" >"$CLOUD_PROMPT" || {
     echo "error: could not render the cloud launch instructions for $ID at $CLOUD_PROMPT" >&2
     exit 1
   }
@@ -6700,7 +6701,6 @@ if [ "$HARNESS" = claude-cloud ]; then
   CLOUD_URL=${CLOUD_CREATED#*$'\t'}
   CLOUD_ABORT_SESSION=$CLOUD_SESSION
 fi
-SPAWN_GEN="s$(date +%s).${BASHPID:-$$}.$RANDOM"
 SPAWN_META_PATH="$STATE/$ID.meta"
 if [ "$SPAWN_META_LOCK_HELD" != 1 ]; then
   SPAWN_META_LOCK=$(fm_meta_lock_path "$STATE/$ID.meta") || exit 1

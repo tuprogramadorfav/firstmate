@@ -8,13 +8,17 @@
 # helper carries only the way back, on one branch of the project's origin that
 # only it writes:
 #
-#   <status-branch>  status.log  one Firstmate status line per line, in order
-#                    acks        one acknowledged steering record name per line
-#                    report.md   the scout report, when one is published
+#   <status-branch>  status/<spawn-gen>.log  one Firstmate status line per
+#                                           line, in order, written by one
+#                                           session incarnation
+#                    acks                   one acknowledged steering record
+#                                           name per line
+#                    report.md              the scout report, when published
 #
-# bin/fm-cloud-lib.sh owns the branch name and embeds this file verbatim in the
-# cloud launch instructions, which tell the cloud worker to install it as an
-# executable named `fm-cloud` with FM_CLOUD_STATUS_BRANCH filled in. It never
+# bin/fm-cloud-lib.sh owns the branch and log names and embeds this file
+# verbatim in the cloud launch instructions, which tell the cloud worker to
+# install it as an executable named `fm-cloud` with FM_CLOUD_STATUS_BRANCH and
+# FM_CLOUD_STATUS_LOG filled in. It never
 # touches the working tree or the checked-out branch: commits are built with
 # plumbing in a private index and pushed by explicit refspec, so the task
 # branch and its uncommitted work are unaffected.
@@ -27,6 +31,7 @@
 set -euo pipefail
 
 STATUS_BRANCH=${FM_CLOUD_STATUS_BRANCH:?FM_CLOUD_STATUS_BRANCH is required}
+STATUS_LOG=${FM_CLOUD_STATUS_LOG:?FM_CLOUD_STATUS_LOG is required}
 REMOTE=${FM_CLOUD_REMOTE:-origin}
 STATUS_REF=refs/fm-cloud/status
 
@@ -38,7 +43,7 @@ die() {
 git rev-parse --git-dir >/dev/null 2>&1 || die "run inside the task's git checkout"
 
 # The status branch's current commit, adopting the remote copy on first use so
-# a replacement session continues the same log instead of forking it.
+# a replacement session continues the same branch instead of forking it.
 status_head() {
   if git rev-parse -q --verify "$STATUS_REF" >/dev/null; then
     git rev-parse "$STATUS_REF"
@@ -115,7 +120,7 @@ cmd_status() {
   local line=$*
   [ -n "$line" ] || die "status needs a line"
   case "$line" in *$'\n'*) die "status takes exactly one line" ;; esac
-  status_update status.log "status: ${line%%:*}" append_line "$line"
+  status_update "$STATUS_LOG" "status: ${line%%:*}" append_line "$line"
 }
 
 cmd_ack() {

@@ -26,7 +26,8 @@
 #   6. config/cloud-environment selects the session's environment by project,
 #      and a malformed line refuses before anything is created.
 #   7. A fresh spawn removes the return branch and relay record an earlier
-#      spawn of the same id left behind.
+#      spawn of the same id left behind, and refuses when origin cannot answer
+#      whether one remains.
 set -u
 
 # shellcheck source=tests/fixtures.sh
@@ -142,6 +143,8 @@ test_scout_launch() {
   assert_contains "$prompt" "# Cloud runtime contract" "the session receives the cloud contract"
   assert_contains "$prompt" "publish it with \`fm-cloud report <file>\`" "a scout is told how to publish its report"
   assert_contains "$prompt" ": \"\${FM_CLOUD_STATUS_BRANCH:=fm-cloud/$hometag/cs1}\"" "the helper carries the return branch"
+  assert_contains "$prompt" ": \"\${FM_CLOUD_STATUS_LOG:=status/$(sed -n 's/^spawn_gen=//p' "$home/state/cs1.meta").log}\"" \
+    "the helper writes this incarnation's own status log"
   assert_contains "$prompt" "investigate the cloud" "the ordinary launch brief follows the contract"
   assert_equals "$prompt" "$(cat "$home/data/cs1/cloud-launch-brief.md")" "the exact instructions are kept in the task's data"
   launch=$(cat "$case_dir/cs1.launch")
@@ -271,6 +274,18 @@ test_fresh_spawn_clears_stale_channel() {
     fail "a fresh spawn kept the stale return branch, whose lines its bridge would relay"
   fi
   [ ! -e "$home/state/sc1.cloud-sync" ] || fail "a fresh spawn kept the stale relay record"
+  # An origin that cannot be asked whether a stale branch remains refuses the
+  # spawn rather than letting a new bridge relay that branch.
+  local real_git no_ls_remote="$case_dir/no-ls-remote-bin"
+  real_git=$(command -v git)
+  mkdir -p "$no_ls_remote"
+  cat > "$no_ls_remote/git" <<SH
+#!/usr/bin/env bash
+case " \$* " in *' ls-remote '*) echo 'fatal: unable to access origin' >&2; exit 128 ;; esac
+exec '$real_git' "\$@"
+SH
+  chmod +x "$no_ls_remote/git"
+  PATH="$no_ls_remote:$PATH" refuses sc2 "could not confirm that no stale cloud return branch fm-cloud/$hometag/sc2 remains on origin" --scout --harness claude-cloud
   pass "a fresh spawn removes the return branch and relay record an earlier spawn left"
 }
 

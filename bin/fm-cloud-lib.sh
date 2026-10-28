@@ -17,7 +17,9 @@
 # Return branch (fm_cloud_status_branch): fm-cloud/<hometag>/<task-id>. The
 # home tag (bin/fm-backend-hometag-lib.sh) keeps equal task ids in two homes
 # that share one origin apart. A relaunch's replacement session continues the
-# same branch, so its log follows the previous session's.
+# same branch, but each incarnation (the task record's spawn_gen) writes its own
+# status log there (fm_cloud_status_log), so a superseded session's late lines
+# are never read as its replacement's.
 #
 # Sourcing: requires FM_ROOT and FM_HOME for the home tag; set -u safe.
 # FM_CLOUD_CLAUDE overrides the Claude Code executable for tests.
@@ -28,6 +30,10 @@ _FM_CLOUD_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 fm_cloud_status_branch() {  # <task-id>
   printf 'fm-cloud/%s/%s' "$(fm_backend_hometag)" "$1"
+}
+
+fm_cloud_status_log() {  # <spawn-gen>
+  printf 'status/%s.log' "$1"
 }
 
 # owner/repo of a github.com origin URL, or nonzero for any other remote. The
@@ -103,12 +109,13 @@ fm_cloud_preflight() {  # <git-dir>
 }
 
 # The instructions a cloud session receives: this runtime contract, the cloud
-# helper with the task's return branch baked in, then the ordinary launch
-# brief.
-fm_cloud_render_prompt() {  # <task-id> <kind> <mode> <branch> <base> <slug> <launch-brief> <code-root>
-  local id=$1 kind=$2 mode=$3 branch=$4 base=$5 slug=$6 brief=$7 root=$8
-  local status_branch
+# helper with the task's return branch and this incarnation's status log baked
+# in, then the ordinary launch brief.
+fm_cloud_render_prompt() {  # <task-id> <spawn-gen> <kind> <mode> <branch> <base> <slug> <launch-brief> <code-root>
+  local id=$1 gen=$2 kind=$3 mode=$4 branch=$5 base=$6 slug=$7 brief=$8 root=$9
+  local status_branch status_log
   status_branch=$(fm_cloud_status_branch "$id")
+  status_log=$(fm_cloud_status_log "$gen")
   cat <<EOF
 # Cloud runtime contract
 You are a Firstmate task worker running in a Claude Code cloud session on github.com/$slug, not on the operator's machine.
@@ -136,7 +143,7 @@ EOF
   printf '\n--- fm-cloud helper begin ---\n'
   sed -n '1p' "$root/bin/fm-cloud-worker.sh"
   # shellcheck disable=SC2016 # the default expands in the cloud, not here
-  printf ': "${FM_CLOUD_STATUS_BRANCH:=%s}"\nexport FM_CLOUD_STATUS_BRANCH\n' "$status_branch"
+  printf ': "${FM_CLOUD_STATUS_BRANCH:=%s}"\n: "${FM_CLOUD_STATUS_LOG:=%s}"\nexport FM_CLOUD_STATUS_BRANCH FM_CLOUD_STATUS_LOG\n' "$status_branch" "$status_log"
   sed '1d' "$root/bin/fm-cloud-worker.sh"
   printf -- '--- fm-cloud helper end ---\n\n'
   cat "$brief"
@@ -296,13 +303,17 @@ fm_cloud_control() {  # <session-id> <interrupt|exit|closed>
   return "$status"
 }
 
-# Remove the return branch from origin and its local tracking ref. An absent
-# branch is not an error, so cleanup is idempotent.
+# Remove the return branch from origin and its local tracking ref. A branch
+# origin reports absent is not an error, so cleanup is idempotent; a query that
+# fails proves nothing and fails.
 fm_cloud_delete_channel() {  # <task-id> <git-dir>
-  local branch
+  local branch status=0
   branch=$(fm_cloud_status_branch "$1")
-  if [ -n "$(GIT_TERMINAL_PROMPT=0 git -C "$2" ls-remote origin "refs/heads/$branch" 2>/dev/null)" ]; then
-    GIT_TERMINAL_PROMPT=0 git -C "$2" push -q origin --delete "$branch" 2>/dev/null || return 1
-  fi
+  GIT_TERMINAL_PROMPT=0 git -C "$2" ls-remote --exit-code origin "refs/heads/$branch" >/dev/null 2>&1 || status=$?
+  case "$status" in
+    0) GIT_TERMINAL_PROMPT=0 git -C "$2" push -q origin --delete "$branch" 2>/dev/null || return 1 ;;
+    2) ;;
+    *) return 1 ;;
+  esac
   git -C "$2" update-ref -d "refs/fm-cloud/$1/status" 2>/dev/null || true
 }

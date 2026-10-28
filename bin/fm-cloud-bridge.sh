@@ -18,7 +18,8 @@
 #             only when the cloud worker acknowledges it on the return branch,
 #             so the inbox's re-ring and escalation ladder
 #             (bin/fm-task-inbox-lib.sh) still measures the worker.
-#   status    each new status.log line from the return branch is appended
+#   status    each new line of this incarnation's status log (the task
+#             record's spawn_gen, bin/fm-cloud-lib.sh) on the return branch is appended
 #             verbatim to state/<id>.status (with the fleet-ledger hook the
 #             brief's own append runs), so it wakes firstmate and classifies
 #             exactly as a local worker's line. A ship's `done:` line is
@@ -30,8 +31,9 @@
 #             any other state marks it idle (source cloud-bridge,
 #             bin/fm-busy-lib.sh), closing the turn for the watcher.
 #   report    a scout's published report.md is copied to data/<id>/report.md.
-#   silence   a session that reports nothing within FM_CLOUD_FIRST_STATUS_SECS
-#             (default 900) of launch gets one `blocked:` line, because
+#   silence   a session that writes no status line of its own within
+#             FM_CLOUD_FIRST_STATUS_SECS (default 900) of launch gets one
+#             `blocked:` line, because
 #             repository access or session startup most likely failed.
 #
 # Keys (bin/fm-control-lib.sh owns which verb sends which): Escape sends the
@@ -81,10 +83,12 @@ BRANCH=$(fm_meta_get "$META" branch)
 SESSION=$(fm_meta_get "$META" cloud_session)
 URL=$(fm_meta_get "$META" cloud_url)
 BUSY_GEN=$(fm_meta_get "$META" busy_gen)
+SPAWN_GEN=$(fm_meta_get "$META" spawn_gen)
 STATUS_BRANCH=$(fm_cloud_status_branch "$ID")
+STATUS_LOG=$(fm_cloud_status_log "$SPAWN_GEN")
 STATUS_REF="refs/fm-cloud/$ID/status"
 
-if [ -z "$WT" ] || [ ! -d "$WT" ] || [ -z "$SESSION" ]; then
+if [ -z "$WT" ] || [ ! -d "$WT" ] || [ -z "$SESSION" ] || [ -z "$SPAWN_GEN" ]; then
   echo "error: task $ID records no cloud session or worktree in $META; launch it through fm-spawn.sh --harness claude-cloud" >&2
   exit 1
 fi
@@ -104,11 +108,12 @@ sync_set() {  # <key> <value>
   return 1
 }
 
-# A new session (a relaunch) continues the same return branch, so the relayed
-# count carries over, but its silence clock starts fresh and records it has
+# A new session (a relaunch) writes a status log of its own on the same return
+# branch, so its relayed count and silence clock start fresh and records it has
 # not been sent are sent to it.
 if [ "$(sync_get session)" != "$SESSION" ]; then
   sync_set session "$SESSION"
+  sync_set relayed 0
   sync_set started "$(date +%s)"
   sync_set silence_reported ""
   sync_set sent ""
@@ -236,7 +241,7 @@ pull_status() {
   LAST_ACTIVITY=$(git -C "$WT" log -1 --format=%ct "$STATUS_REF" 2>/dev/null)
   seen=$(sync_get status_head)
   [ "$head" != "$seen" ] || return 0
-  log=$(git -C "$WT" show "$head:status.log" 2>/dev/null) || log=
+  log=$(git -C "$WT" show "$head:$STATUS_LOG" 2>/dev/null) || log=
   total=0
   [ -z "$log" ] || total=$(printf '%s\n' "$log" | wc -l | tr -d ' ')
   relayed=$(sync_get relayed)
@@ -277,16 +282,16 @@ EOF
   sync_set status_head "$head"
 }
 
-# Activity counts only when it is newer than this session's start, because a
-# relaunch's return branch already carries the previous session's commits.
+# Only a status line this session wrote proves it started; other commits on
+# the return branch, such as a superseded session's exit line, do not.
 check_silence() {
-  local started now
+  local started relayed now
   [ -z "$(sync_get silence_reported)" ] || return 0
+  relayed=$(sync_get relayed)
+  [ "${relayed:-0}" -eq 0 ] || return 0
   started=$(sync_get started)
-  [ -n "$started" ] || return 0
-  [ -z "$LAST_ACTIVITY" ] || [ "$LAST_ACTIVITY" -lt "$started" ] || return 0
   now=$(date +%s)
-  [ $((now - started)) -ge "$FIRST_STATUS_SECS" ] || return 0
+  [ -n "$started" ] && [ $((now - started)) -ge "$FIRST_STATUS_SECS" ] || return 0
   append_status "blocked [at=$now]: cloud session $URL has not reported within $((FIRST_STATUS_SECS / 60)) minutes of launch; open it to check repository access and startup" || return 0
   sync_set silence_reported "$now"
   mark_busy idle cloud-silent
