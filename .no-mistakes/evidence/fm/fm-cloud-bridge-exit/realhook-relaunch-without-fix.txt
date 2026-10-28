@@ -1,0 +1,21 @@
+pane HERDR_SOCKET_PATH captured
+agent state before relaunch: dead
+relaunch output: warning: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-cloud-herdr.HgFIrN/home/data/cherdr/launch-brief.md records no ship branch; defaulting to legacy branch fm/cherdr
+warning: /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-cloud-herdr.HgFIrN/home/data/cherdr/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode no-mistakes - confirm its definition of done matches
+error: the replacement agent for cherdr did not come up within 90s (endpoint reads 'dead')
+error: cherdr was relaunched on claude but no running agent could be confirmed; its work is preserved at /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-cloud-herdr.HgFIrN/wt
+screen:
+fm-cloud-bridge  task cherdr (ship)
+cloud session    https://claude.ai/code/session_cherdr
+return branch    origin fm-cloud/firstmate-9df165b8/cherdr
+last activity    none yet
+last status
+steering         0 record(s) awaiting acknowledgement
+
+Escape sends an interrupt request; Ctrl-C sends an exit request and stops this bridge.
+
+❯ export COMPACT_ADVISER_DISABLE=1
+export FM_TASK_ID=cherdr
+bridge procs: 70413 fm-cloud-bridge /Users/programanding/.no-mistakes/worktrees/e297dd311d7c/01M61X165R94A553J0FWK8C03S/bin/fm-cloud-bridge.sh /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-cloud-herdr.HgFIrN/home/state /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-cloud-herdr.HgFIrN/home/data /private/var/folders/wj/1hdfpv_57fl8y5y14nkv27gw0000gn/T/fm-cloud-herdr.HgFIrN/home/config cherdr
+not ok - relaunch --harness claude from a running bridge should succeed
+exit=1

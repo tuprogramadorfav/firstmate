@@ -1,0 +1,2 @@
+not ok - a running bridge on Herdr must read alive, got 'dead'
+exit=1

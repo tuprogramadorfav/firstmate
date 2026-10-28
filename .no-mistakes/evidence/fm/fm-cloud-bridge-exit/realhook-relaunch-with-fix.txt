@@ -1,0 +1,8 @@
+pane HERDR_SOCKET_PATH captured
+agent state before relaunch: alive
+ok - real herdr: relaunch --harness claude stops the bridge and launches the local worker in its pane
+--- fake CLI runs:
+cli-run pane= sock= args=--cloud cloud instructions
+cli-run pane= sock= args=-p --cloud
+cli-run pane= sock= args=-p --cloud
+exit=0

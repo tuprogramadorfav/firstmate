@@ -1,0 +1,3 @@
+pane HERDR_SOCKET_PATH captured
+not ok - a running bridge on Herdr must read alive, got 'dead'
+exit=1
