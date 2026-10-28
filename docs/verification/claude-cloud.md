@@ -61,5 +61,5 @@ With the bridge reporting its pane (`pane report-agent --source firstmate:cloud-
 
 [`tests/fm-cloud-bridge-herdr-e2e.test.sh`](../../tests/fm-cloud-bridge-herdr-e2e.test.sh) is that regression; rerun it after every Herdr upgrade.
 
-Not exercised live: the control plane's verbs on a real tmux pane, the `config/cloud-environment` selectors, and a message reaching a session whose VM had been reclaimed.
+Not exercised live: the control plane's verbs on a real tmux pane, the `config/cloud-environment` selectors, the private-origin refusal (the end-to-end run above used a public fork and predates it), and a message reaching a session whose VM had been reclaimed.
 The portable regressions are [`tests/fm-cloud-bridge.test.sh`](../../tests/fm-cloud-bridge.test.sh) and [`tests/fm-cloud-spawn.test.sh`](../../tests/fm-cloud-spawn.test.sh).

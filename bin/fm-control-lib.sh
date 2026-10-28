@@ -152,8 +152,8 @@ fm_control_interrupt_transport() {  # <harness>
 # through Herdr). cortex cancels on a single Escape, printing the Interrupted row
 # with an idle composer and firing its Stop hook; an Escape pressed on an idle
 # composer does nothing (verified live, cortex 1.1.104). claude-cloud's
-# Escape reaches its local bridge, which pushes an interrupt request the cloud
-# worker honors at its next inbox check (bin/fm-cloud-bridge.sh).
+# Escape reaches its local bridge, which sends the cloud session an interrupt
+# request it honors at its next turn boundary (bin/fm-cloud-bridge.sh).
 fm_control_interrupt_key() {  # <harness>
   case "${1-}" in
     claude|claude-cloud|codex|opencode|pi|pi-signed|omp|kimi|cursor|gemini|muse|rovo|agy|devin|commandcode|cortex) printf 'Escape' ;;
@@ -283,8 +283,8 @@ fm_control_exit_command() {  # <harness> [opencode-major]
       esac
       ;;
     claude|grok|kimi|cursor|muse|rovo) printf '/exit' ;;
-    # claude-cloud's bridge takes Ctrl-C as its exit: it pushes the exit
-    # request to the cloud session and ends (bin/fm-cloud-bridge.sh).
+    # claude-cloud's bridge takes Ctrl-C as its exit: it sends the cloud
+    # session an exit request and ends (bin/fm-cloud-bridge.sh).
     claude-cloud) printf 'C-c' ;;
     codex|pi|pi-signed|omp|gemini|agy|devin|commandcode|polytoken|cortex) printf '/quit' ;;
     *) return 1 ;;

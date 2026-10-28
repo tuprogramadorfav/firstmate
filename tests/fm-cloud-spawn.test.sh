@@ -342,8 +342,17 @@ test_relaunch_to_local_stops_cloud_session() {
   pass "a relaunch onto a local harness stops the superseded cloud session"
 }
 
+# Scout cleanup passes the captain-call completion gate, which
+# bin/fm-captain-hold.sh refuses without a compatible tasks-axi; CI installs
+# one, and a host without it skips these cases rather than failing the suite.
+teardown_gate_unavailable() {  # <case>
+  command -v tasks-axi >/dev/null 2>&1 && return 1
+  printf 'ok - skipped (tasks-axi is not installed; scout cleanup needs it): %s\n' "$1"
+}
+
 test_teardown_closes_channel() {
   local out
+  teardown_gate_unavailable "cleanup closes the session and deletes its return branch" && return 0
   printf '# Report\n' > "$home/data/cs1/report.md"
   # The cloud session's return branch, as its helper would have pushed it.
   git -C "$wt" push -q "file://$origin_git" "HEAD:refs/heads/fm-cloud/$hometag/cs1"
@@ -368,6 +377,7 @@ test_teardown_closes_channel() {
 
 test_teardown_after_local_handoff() {
   local out session
+  teardown_gate_unavailable "cleanup after a local handoff closes the session and its return branch" && return 0
   fm_test_spawn_brief "$home" ho1
   out=$(cloud_spawn ho1 --scout --harness claude-cloud) || fail "spawn failed: $out"
   session=$(sed -n 's/^cloud_session=//p' "$home/state/ho1.meta")
